@@ -17,12 +17,22 @@
 #include "shader.hpp"
 #include "model.hpp"
 
-const unsigned int wWidth = 800;
-const unsigned int wHeight = 600;
+const unsigned int wWidth = 1000;
+const unsigned int wHeight = 800;
 static unsigned loadImageToTexture(const char* filePath); //Ucitavanje teksture, izdvojeno u funkciju
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraRight = glm::cross(cameraFront, cameraUp);
+
+float cameraSpeed = 0.05f;
+float yaw = -90.0f;
+float pitch = 0.0f;
+
 
 int main()
 {
+#pragma region Loads
     if(!glfwInit())
     {
         std::cout << "GLFW fail!\n" << std::endl;
@@ -33,7 +43,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(wWidth, wHeight, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(wWidth, wHeight, "Na kraj sela zuta kuca", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Window fail!\n" << std::endl;
@@ -47,8 +57,10 @@ int main()
         std::cout << "GLEW fail! :(\n" << std::endl;
         return -3;
     }
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
+#pragma endregion
+#pragma region name
     Shader nameShader("name.vert", "name.frag");
     float nameVertices[] =
     {
@@ -81,9 +93,10 @@ int main()
     glGenBuffers(1, &nameInd);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nameInd);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nameIndices), nameIndices, GL_STATIC_DRAW);
+#pragma endregion
 
-
-    Model lija("res/low-poly-fox.obj");
+    Model tree("models/Tree/Tree.obj");
+    Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
     //Tjemena i baferi su definisani u model klasi i naprave se pri stvaranju objekata
 
     Shader unifiedShader("basic.vert", "basic.frag");
@@ -95,6 +108,7 @@ int main()
     unifiedShader.setVec3("uLightColor", 1, 1, 1);
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
     unifiedShader.setMat4("uP", projection);
+
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     unifiedShader.setMat4("uV", view);
     glm::mat4 model = glm::mat4(1.0f);
@@ -103,8 +117,16 @@ int main()
     unsigned name = loadImageToTexture("res/imebelo.png");
     glBindTexture(GL_TEXTURE_2D, name);
     glGenerateMipmap(GL_TEXTURE_2D);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+    // Texture initialization
+    unsigned grassTexture = loadImageToTexture("res/trava.png");
+    glBindTexture(GL_TEXTURE_2D, grassTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -116,15 +138,66 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+            pitch += 1.0f;
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+            pitch -= 1.0f;
 
+        // Ensure pitch stays within a reasonable range
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraFront;
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            cameraPos -= cameraSpeed * cameraFront;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraUp;
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+            cameraPos -= cameraSpeed * cameraUp;
+        if (cameraPos.y < 0.05)
+            cameraPos.y = 0.05;
+        glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        model = glm::rotate(model, glm::radians(0.1f), glm::vec3(0.0f, 1.0f, 0.0f));
+        unifiedShader.use();
+        // Initialize camera front vector
+        // Initialize camera front vector
+        // Initialize camera front vector
+        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
+        // Calculate the right vector using cross product
+        glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
+
+        // Create a rotation matrix for pitch
+        glm::mat4 pitchRotation = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), right);
+
+        // Rotate the camera front vector using the rotation matrix
+        cameraFront = glm::mat3(pitchRotation) * cameraFront;
+
+        // Update view matrix using glm::lookAt
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+
+
+        unifiedShader.setMat4("uV", view);
+        glUseProgram(0);
+
+
+
+        unifiedShader.use();
         unifiedShader.setMat4("uM", model);
-        lija.Draw(unifiedShader);
+        tree.Draw(unifiedShader);
+        glUseProgram(0);
+
 
 
         glEnable(GL_BLEND);
@@ -135,8 +208,11 @@ int main()
         glBindTexture(GL_TEXTURE_2D, name);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(0 * sizeof(unsigned int)));
         glDisable(GL_BLEND);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         glUseProgram(0);
         glBindVertexArray(0);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -145,7 +221,6 @@ int main()
     glfwTerminate();
     return 0;
 }
-
 
 static unsigned loadImageToTexture(const char* filePath) {
     int TextureWidth;
