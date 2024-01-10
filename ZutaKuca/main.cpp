@@ -25,11 +25,11 @@ glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 cameraRight = glm::cross(cameraFront, cameraUp);
 
-float cameraSpeed = 0.05f;
-float yaw = -90.0f;
+float cameraSpeed = 0.09f;
 float pitch = 0.0f;
 
-
+float orbitSpeed = 0.5f;
+float orbitRadius = 10.0f;
 int main()
 {
 #pragma region Loads
@@ -112,6 +112,7 @@ int main()
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     unifiedShader.setMat4("uV", view);
     glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
 
     unsigned name = loadImageToTexture("res/imebelo.png");
@@ -170,34 +171,45 @@ int main()
 
         unifiedShader.use();
         // Initialize camera front vector
-        // Initialize camera front vector
-        // Initialize camera front vector
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-
         // Calculate the right vector using cross product
         glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
-
         // Create a rotation matrix for pitch
         glm::mat4 pitchRotation = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), right);
-
         // Rotate the camera front vector using the rotation matrix
         cameraFront = glm::mat3(pitchRotation) * cameraFront;
-
         // Update view matrix using glm::lookAt
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-
-
         unifiedShader.setMat4("uV", view);
         glUseProgram(0);
-
-
 
         unifiedShader.use();
         unifiedShader.setMat4("uM", model);
         tree.Draw(unifiedShader);
         glUseProgram(0);
 
+        unifiedShader.use();
+       
+        float currentTime = glfwGetTime();
+        float orbitAngle = currentTime * orbitSpeed;
+        glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, 0.0f);  // Set the actual position of the tree
+        float dogX = treePosition.x + glm::cos(orbitAngle) * orbitRadius;
+        float dogZ = treePosition.z + glm::sin(orbitAngle) * orbitRadius;
+
+        glm::vec3 dogScale = glm::vec3(0.03f);
+
+        // Update the model matrix for the dog's position and scale
+        glm::mat4 dogModel = glm::mat4(1.0f);
+        dogModel = glm::translate(dogModel, glm::vec3(dogX, 0.0f, dogZ));
+        dogModel = glm::scale(dogModel, dogScale);
+        dogModel = glm::rotate(dogModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // Set the model matrix in the shader
+        unifiedShader.setMat4("uM", dogModel);
+
+        // Draw the dog model
+        dog.Draw(unifiedShader);
+        glUseProgram(0);
 
 
         glEnable(GL_BLEND);
