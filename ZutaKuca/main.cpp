@@ -63,13 +63,13 @@ int main()
         0, 1, 3,
         3, 2, 0
     };
-    unsigned int VAOPERSONAL;
-    glGenVertexArrays(1, &VAOPERSONAL);
-    glBindVertexArray(VAOPERSONAL);
+    unsigned int nameVAO;
+    glGenVertexArrays(1, &nameVAO);
+    glBindVertexArray(nameVAO);
 
-    unsigned int VBOPERSONAL;
-    glGenBuffers(1, &VBOPERSONAL);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOPERSONAL);
+    unsigned int nameVBO;
+    glGenBuffers(1, &nameVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, nameVBO);
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(nameVertices), nameVertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
@@ -77,9 +77,9 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    unsigned int EBOPERSONAL;
-    glGenBuffers(1, &EBOPERSONAL);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOPERSONAL);
+    unsigned int nameInd;
+    glGenBuffers(1, &nameInd);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nameInd);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nameIndices), nameIndices, GL_STATIC_DRAW);
 
 
@@ -130,7 +130,7 @@ int main()
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         nameShader.use();
-        glBindVertexArray(VAOPERSONAL);
+        glBindVertexArray(nameVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, name);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(0 * sizeof(unsigned int)));
