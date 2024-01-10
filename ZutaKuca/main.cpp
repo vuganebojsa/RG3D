@@ -27,9 +27,11 @@ glm::vec3 cameraRight = glm::cross(cameraFront, cameraUp);
 
 float cameraSpeed = 0.09f;
 float pitch = 0.0f;
-
+float yaw = 0.0f;
 float orbitSpeed = 0.5f;
-float orbitRadius = 10.0f;
+float orbitRadius = 5.0f;
+
+
 int main()
 {
 #pragma region Loads
@@ -112,7 +114,7 @@ int main()
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     unifiedShader.setMat4("uV", view);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
 
 
     unsigned name = loadImageToTexture("res/imebelo.png");
@@ -123,8 +125,6 @@ int main()
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-
-    // Texture initialization
     unsigned grassTexture = loadImageToTexture("res/trava.png");
     glBindTexture(GL_TEXTURE_2D, grassTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -134,21 +134,22 @@ int main()
 
     // omogucavanje dubine
     glEnable(GL_DEPTH_TEST);
-
     glCullFace(GL_BACK);
+
 
     while (!glfwWindowShouldClose(window))
     {
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+       
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
             pitch += 1.0f;
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
             pitch -= 1.0f;
-
-        // Ensure pitch stays within a reasonable range
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+            yaw += 1.0f;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            yaw -= 1.0f;
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraFront;
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -163,8 +164,20 @@ int main()
             cameraPos += cameraSpeed * cameraUp;
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
             cameraPos -= cameraSpeed * cameraUp;
+         
+
+        // Ensure yaw stays within a reasonable range
+        if (yaw > 360.0f)
+            yaw -= 360.0f;
+        if (yaw < 0.0f)
+            yaw += 360.0f;
+
         if (cameraPos.y < 0.05)
             cameraPos.y = 0.05;
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -176,8 +189,14 @@ int main()
         glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
         // Create a rotation matrix for pitch
         glm::mat4 pitchRotation = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), right);
-        // Rotate the camera front vector using the rotation matrix
-        cameraFront = glm::mat3(pitchRotation) * cameraFront;
+        glm::mat4 yawRotation = glm::rotate(glm::mat4(1.0f), glm::radians(yaw), cameraUp);
+
+        // Combine the pitch and yaw rotations
+        glm::mat4 orientation = yawRotation * pitchRotation;
+
+        // Rotate the camera front vector using the combined rotation matrix
+        cameraFront = glm::mat3(orientation) * cameraFront;
+
         // Update view matrix using glm::lookAt
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         unifiedShader.setMat4("uV", view);
@@ -192,7 +211,7 @@ int main()
        
         float currentTime = glfwGetTime();
         float orbitAngle = currentTime * orbitSpeed;
-        glm::vec3 treePosition = glm::vec3(0.0f, 0.0f, 0.0f);  // Set the actual position of the tree
+        glm::vec3 treePosition = glm::vec3(0.5f, 0.0f, 0.0f);  // Set the actual position of the tree
         float dogX = treePosition.x + glm::cos(orbitAngle) * orbitRadius;
         float dogZ = treePosition.z + glm::sin(orbitAngle) * orbitRadius;
 
