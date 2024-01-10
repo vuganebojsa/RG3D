@@ -33,6 +33,10 @@
     <None Include="basic.vert">
       <Filter>Source Files\Shader Files</Filter>
     </None>
+    <None Include="phong.frag" />
+    <None Include="phong.vert" />
+    <None Include="name.vert" />
+    <None Include="name.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.hpp">
