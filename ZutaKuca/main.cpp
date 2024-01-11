@@ -117,17 +117,19 @@ int main()
     glGenBuffers(1, &nameInd);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nameInd);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nameIndices), nameIndices, GL_STATIC_DRAW);
+
 #pragma endregion
 
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
     Model man("models/Man/man.obj");
     Model sun("models/Sun/sun.obj");
-    //Tjemena i baferi su definisani u model klasi i naprave se pri stvaranju objekata
 
     Shader unifiedShader("basic.vert", "basic.frag");
     Shader sunShader("basic.vert", "cube.frag");
+    Shader houseShader("basic.vert", "house.frag");
     Shader simpleShader("simple.vert", "simple.frag");
+    Shader groundShader("basic.vert", "ground.frag");
 
     sunShader.use();
 
@@ -147,7 +149,13 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
 
+    houseShader.use();
+    houseShader.setMat4("uV", camera.GetViewMatrix());
+    houseShader.setMat4("uP", projection);
 
+    groundShader.use();
+    groundShader.setMat4("uV", camera.GetViewMatrix());
+    groundShader.setMat4("uP", projection);
     unsigned name = loadImageToTexture("res/imebelo.png");
     glBindTexture(GL_TEXTURE_2D, name);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -163,7 +171,87 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    float groundVertices[] = {
+         -25.0, -0.1,  20.0, 0.0, 1.0, 0.0,
+         25.0, -0.1,  20.0, 0.0, 1.0, 0.0,
+         -25.0,  0.0,  -20.0, 0.0, 1.0,  0.0,
+         25.0,  0.0,  -20.0, 0.0, 1.0,  0.0,
+    };
 
+    float houseVertices[] =
+    {
+        // First Floor (Yellow)
+        -5.0, -0.0,  1.0, 1.0, 1.0, 0.0,
+         5.3, -0.0,  1.0, 1.0, 1.0, 0.0,
+         -5.0,  4.5,  1.0, 1.0, 1.0,  0.0,
+         5.3,  4.5,  1.0, 1.0, 1.0,  0.0,
+
+         // Second Floor (Yellow)
+         -4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
+          4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
+         -4.2,  8.2,  1.0, 1.0, 1.0,  0.0,
+          4.2,  8.2,  1.0, 1.0, 1.0,  0.0,
+           // door red
+           -0.1, -0.0,  1.0f, 1.0f, 0.0f, 0.0,
+           0.1, -0.0,   1.0f, 1.0f, 0.0f, 0.0,
+           -0.1,  -0.1,   1.0f, 1.0f, 0.0f,  0.0,
+           0.1,  -0.1,   1.0f, 1.0f, 0.0f,  0.0,
+        // first floor
+        -5.0, -0.0,  -4.0, 1.0, 1.0, 0.0,
+         5.3, -0.0,  -4.0, 1.0, 1.0, 0.0,
+         -5.0,  4.5,  -4.0, 1.0, 1.0,  0.0,
+         5.3,  4.5,  -4.0, 1.0, 1.0,  0.0,
+
+         // Second Floor (Yellow)
+        -4.2,  4.5,  -4.0, 1.0, 1.0,  0.0,
+         4.2,  4.5,  -4.0, 1.0, 1.0,  0.0,
+        -4.2,  8.2,  -4.0, 1.0, 1.0,  0.0,
+         4.2,  8.2,  -4.0, 1.0, 1.0,  0.0,
+
+         // flat roof
+           -4.4,  8.2,  -4.2, 1.0, 1.0,  0.0,
+          4.4,  8.2,  -4.2, 1.0, 1.0,  0.0,
+         -4.4,  8.15,  1.2, 1.0, 1.0,  0.0,
+
+          4.4,  8.15,  1.2, 1.0, 1.0,  0.0,
+
+    };
+    unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
+    unsigned int houseVAO, houseVBO;
+    glGenVertexArrays(1, &houseVAO);
+    glBindVertexArray(houseVAO);
+
+    glGenBuffers(1, &houseVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, houseVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(houseVertices), houseVertices, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    unsigned int groundVao, groundVbo;
+    glGenVertexArrays(1, &groundVao);
+    glBindVertexArray(groundVao);
+
+    glGenBuffers(1, &groundVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, groundVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(groundVertices), groundVertices, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
     // omogucavanje dubine
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -188,9 +276,39 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        houseShader.use();
+        houseShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
+        groundShader.use();
+        groundShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
         unifiedShader.use();
         unifiedShader.setMat4("uV", camera.GetViewMatrix());
         glUseProgram(0);
+        
+        groundShader.use();
+        glm::mat4 groundModel = glm::mat4(1.0f);
+        groundModel = glm::translate(groundModel, glm::vec3(2.0f, 0.0f, -5.0f));
+        groundShader.setMat4("uM", groundModel);
+        glBindVertexArray(groundVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glUseProgram(0);
+
+        glm::mat4 houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(2.0f, 0.0f, -5.0f));
+       
+        glDisable(GL_CULL_FACE);
+        houseShader.use();
+
+        houseShader.setMat4("uM", houseModel);
+        glBindVertexArray(houseVAO);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+        glDrawArrays(GL_TRIANGLE_STRIP, 8, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 12, 8);
+        glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+
+        glUseProgram(0);
+        glEnable(GL_CULL_FACE);
 
         float currentTime = glfwGetTime();
 
