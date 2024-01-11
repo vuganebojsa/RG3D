@@ -125,6 +125,7 @@ int main()
     Model man("models/Man/man.obj");
     Model sun("models/Sun/sun.obj");
     Model fence("models/Ograda/fence.obj");
+    Model door("models/Door/door.obj");
 
     Shader unifiedShader("basic.vert", "basic.frag");
     Shader sunShader("basic.vert", "cube.frag");
@@ -431,7 +432,8 @@ int main()
 
     float smokeTranslate = 0.0f;
     float sunColor = 1.0f;
-
+    float doorRotationAngle = 0.0f;
+    float doorFlag = 1;
     while (!glfwWindowShouldClose(window))
     {
        
@@ -445,7 +447,24 @@ int main()
             camera.ProcessKeyboard(LEFT, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             camera.ProcessKeyboard(RIGHT, 0.02f);
+        if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        {
+            
+            doorRotationAngle += 20.0f * 0.03;
+           
 
+        }
+        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+        {
+               doorRotationAngle -= 20.0f * 0.03;
+             
+        }
+        if (doorRotationAngle > 60) {
+            doorRotationAngle = 60;
+        }
+        if (doorRotationAngle < 0) {
+            doorRotationAngle = 0;
+        }
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -577,7 +596,20 @@ int main()
 
         tree.Draw(unifiedShader);
         glUseProgram(0);
+        unifiedShader.use();
 
+        glm::vec3 doorPosition = glm::vec3(2.8f, 0.88f, 5.74f);
+        glm::mat4 doorModelF = glm::mat4(1.0f);
+        doorModelF = glm::translate(doorModelF, doorPosition);
+    
+        glm::vec3 doorScale = glm::vec3(0.011f, 0.008f, 0.02f);
+        doorModelF = glm::scale(doorModelF, doorScale);
+        doorModelF = glm::rotate(doorModelF, -glm::radians(doorRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        unifiedShader.setMat4("uM", doorModelF);
+
+        door.Draw(unifiedShader);
+        glUseProgram(0);
 
         unifiedShader.use();
 
@@ -600,7 +632,7 @@ int main()
 
         unifiedShader.use();
 
-         fencePosition = glm::vec3(5.0f, 0.0f, 6.0f);
+         fencePosition = glm::vec3(4.0f, 0.0f, 6.0f);
         fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
 
