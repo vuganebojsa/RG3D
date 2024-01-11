@@ -48,6 +48,7 @@
     <None Include="ground.frag" />
     <None Include="chimney.frag" />
     <None Include="door.frag" />
+    <None Include="smoke.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.hpp">

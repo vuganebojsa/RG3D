@@ -25,7 +25,7 @@ static unsigned loadImageToTexture(const char* filePath);
 
 float orbitSpeed = 0.8f;
 float orbitRadius = 8.6f;
-glm::vec3 sunPosition = glm::vec3(0.0f, 9.0f, 0.0f); 
+glm::vec3 sunPosition = glm::vec3(0.0f, 20.0f, 0.0f); 
 float sunRotationSpeed = 40.0f;  
 float sunPulseSpeed = 2.5f;     
 float sunMinScale = 0.6f;       
@@ -132,6 +132,9 @@ int main()
     Shader groundShader("basic.vert", "ground.frag");
     Shader chimneyShader("basic.vert", "chimney.frag");
     Shader doorShader("basic.vert", "door.frag");
+    Shader smokeShader("basic.vert", "smoke.frag");
+
+
 
     sunShader.use();
 
@@ -141,6 +144,9 @@ int main()
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     sunShader.setMat4("uV", camera.GetViewMatrix());
 
+    smokeShader.use();
+    smokeShader.setMat4("uP", projection);
+    smokeShader.setMat4("uV", camera.GetViewMatrix());
     doorShader.use();
     doorShader.setMat4("uP", projection);
     doorShader.setMat4("uV", camera.GetViewMatrix());
@@ -179,6 +185,9 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
+#pragma region Vertices
+
+
 
     float groundVertices[] = {
          -25.0, -0.1,  20.0, 0.0, 1.0, 0.0,
@@ -285,7 +294,62 @@ int main()
           4.21,  12.4,  -1.0, 1.0, 1.0,  0.0,
 
     };
+    float smokeVertices[] =
+    {
+        3.9,  12.27,  -1.3, 1.0, 1.0,  0.0,
+         4.1,  12.27,  -1.3, 1.0, 1.0,  0.0,
+        3.9,  12.7,  -1.3, 1.0, 1.0,  0.0,
+         4.1,  12.7,  -1.3, 1.0, 1.0,  0.0,
+
+         3.9,  12.27,  -1.6, 1.0, 1.0,  0.0,
+          4.1,  12.27,  -1.6, 1.0, 1.0,  0.0,
+         3.9,  12.7,  -1.6, 1.0, 1.0,  0.0,
+          4.1,  12.7,  -1.6, 1.0, 1.0,  0.0,
+
+         3.9,  12.27,  -1.6, 1.0, 1.0,  0.0,
+         3.91,  12.7,  -1.6, 1.0, 1.0,  0.0,
+         3.9,  12.27,  -1.3, 1.0, 1.0,  0.0,
+         3.91,  12.7,  -1.3, 1.0, 1.0,  0.0,
+
+         4.1,  12.27,  -1.6, 1.0, 1.0,  0.0,
+         4.11,  12.7,  -1.6, 1.0, 1.0,  0.0,
+        4.1,  12.27,  -1.3, 1.0, 1.0,  0.0,
+         4.11,  12.7,  -1.3, 1.0, 1.0,  0.0,
+
+          3.9,  12.27,  -1.6, 1.0, 1.0,  0.0,
+          4.1,  12.271,  -1.3, 1.0, 1.0,  0.0,
+         3.9,  12.31,  -1.6, 1.0, 1.0,  0.0,
+          4.1,  12.31,  -1.3, 1.0, 1.0,  0.0,
+
+         3.9,  12.7,  -1.6, 1.0, 1.0,  0.0,
+          4.1,  12.7,  -1.3, 1.0, 1.0,  0.0,
+         3.9,  12.71,  -1.6, 1.0, 1.0,  0.0,
+          4.1,  12.71,  -1.3, 1.0, 1.0,  0.0,
+
+    };
+#pragma endregion
+#pragma region Buffing
+
+
     unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
+    unsigned int smokeVao, smokeVbo;
+    glGenVertexArrays(1, &smokeVao);
+    glBindVertexArray(smokeVao);
+
+    glGenBuffers(1, &smokeVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, smokeVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(smokeVertices), smokeVertices, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
     unsigned int doorVao, doorVbo;
     glGenVertexArrays(1, &doorVao);
     glBindVertexArray(doorVao);
@@ -357,12 +421,14 @@ int main()
     // Unbind buffers for the house
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+#pragma endregion
+
     // omogucavanje dubine
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-
+    float smokeTranslate = 0.0f;
     while (!glfwWindowShouldClose(window))
     {
        
@@ -380,6 +446,12 @@ int main()
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        smokeShader.use();
+        smokeShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
+
         chimneyShader.use();
         chimneyShader.setMat4("uV", camera.GetViewMatrix());
         chimneyShader.setVec4("chColooor", glm::vec4(0.6, 0.4, 0.2, 1.0));
@@ -428,6 +500,32 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 44, 4);
 
         glUseProgram(0);
+        
+        float smokeTime = glfwGetTime();
+        float timeSinceLastMove = std::fmod(smokeTime, 1.0f);
+
+        if (timeSinceLastMove < 0.03f) { 
+            smokeTranslate += 0.5f; 
+        }
+        if (smokeTranslate > 3.0f) {
+            smokeTranslate = 0.0f;
+        }
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glm::mat4 smokeModel = glm::mat4(1.0f);
+        smokeModel = glm::translate(smokeModel, glm::vec3(2.0f, smokeTranslate, -5.0f));
+        smokeShader.use();
+
+        smokeShader.setMat4("uM", smokeModel);
+        glBindVertexArray(smokeVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+        glDrawArrays(GL_TRIANGLE_STRIP, 8, 8);
+        glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+        glDisable(GL_BLEND);
+
+        glUseProgram(0);
+
         glm::mat4 doorModel = glm::mat4(1.0f);
         doorModel = glm::translate(doorModel, glm::vec3(2.0f, 0.0f, -5.0f));
         doorShader.use();
