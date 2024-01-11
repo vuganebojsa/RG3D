@@ -37,6 +37,8 @@
     <None Include="phong.vert" />
     <None Include="name.vert" />
     <None Include="name.frag" />
+    <None Include="simple.vert" />
+    <None Include="simple.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.hpp">

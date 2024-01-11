@@ -99,9 +99,11 @@ int main()
 
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
+    Model man("models/Man/man.obj");
     //Tjemena i baferi su definisani u model klasi i naprave se pri stvaranju objekata
 
     Shader unifiedShader("basic.vert", "basic.frag");
+    Shader simpleShader("simple.vert", "simple.frag");
 
     //Render petlja
     unifiedShader.use();
@@ -131,6 +133,30 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
+    float floorVertices[] =
+    {
+        // floor
+        -100, 0, -100, 0.0f, 1.0f, 0.0f,
+        100, 0, -100, 0.0f, 1.0f, 0.0f,
+        -100, 0, 100, 0.0f, 1.0f, 0.0f,
+        100, 0, 100, 0.0f, 1.0f, 0.0f,
+    };
+    unsigned int floorVao, floorVbo;
+    glGenVertexArrays(1, &floorVao);
+    glBindVertexArray(floorVao);
+
+    glGenBuffers(1, &floorVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, floorVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(floorVertices), floorVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the floor
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
 
     // omogucavanje dubine
     glEnable(GL_DEPTH_TEST);
@@ -181,6 +207,14 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+        simpleShader.use();
+      
+        glBindVertexArray(floorVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+        glUseProgram(0);
+
         unifiedShader.use();
         // Initialize camera front vector
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -204,6 +238,19 @@ int main()
         unifiedShader.use();
         unifiedShader.setMat4("uM", model);
         tree.Draw(unifiedShader);
+        glUseProgram(0);
+
+        unifiedShader.use();
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        unifiedShader.setMat4("uV", view);
+
+        glm::vec3 manPosition = glm::vec3(3.0f, 0.0f, -3.0f);
+        glm::mat4 manModel = glm::mat4(1.0f);
+        manModel = glm::translate(manModel, manPosition);
+        glm::vec3 manScale = glm::vec3(0.4f);
+        manModel = glm::scale(manModel, manScale);
+        unifiedShader.setMat4("uM", manModel);
+        man.Draw(unifiedShader);
         glUseProgram(0);
 
         unifiedShader.use();
