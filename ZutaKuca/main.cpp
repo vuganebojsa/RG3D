@@ -23,8 +23,8 @@ const unsigned int wHeight = 800;
 static unsigned loadImageToTexture(const char* filePath);
 
 
-float orbitSpeed = 0.5f;
-float orbitRadius = 5.0f;
+float orbitSpeed = 0.8f;
+float orbitRadius = 8.6f;
 glm::vec3 sunPosition = glm::vec3(0.0f, 9.0f, 0.0f); 
 float sunRotationSpeed = 40.0f;  
 float sunPulseSpeed = 2.5f;     
@@ -133,7 +133,7 @@ int main()
 
     sunShader.use();
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
     sunShader.setMat4("uP", projection);
 
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -214,6 +214,42 @@ int main()
          -4.4,  8.15,  1.2, 1.0, 1.0,  0.0,
 
           4.4,  8.15,  1.2, 1.0, 1.0,  0.0,
+
+          // first floor parket
+          -5.0,  0.0,  -4.0, 1.0, 1.0,  0.0,
+         5.3,  0.0,  -4.0, 1.0, 1.0,  0.0,
+        -5.0,  0.01,  1.0, 1.0, 1.0,  0.0,
+         5.3,  0.01,  1.0, 1.0, 1.0,  0.0,
+
+          // left side of house top
+        -4.20,  4.5,  -4.0, 1.0, 1.0,  0.0,
+         -4.21,  8.2,  -4.0, 1.0, 1.0,  0.0,
+        -4.20,  4.5,  1.0, 1.0, 1.0,  0.0,
+         -4.21,  8.2,  1.0, 1.0, 1.0,  0.0,
+         // right side
+         4.2,  4.5,  -4.0, 1.0, 1.0,  0.0,
+         4.21,  8.2,  -4.0, 1.0, 1.0,  0.0,
+        4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
+         4.21,  8.2,  1.0, 1.0, 1.0,  0.0,
+
+         // left side of house botton
+      -5.0,  0.0,  -4.0, 1.0, 1.0,  0.0,
+       -5.01,  4.5,  -4.0, 1.0, 1.0,  0.0,
+      -5.0,  0.0,  1.0, 1.0, 1.0,  0.0,
+       -5.01,  4.5,  1.0, 1.0, 1.0,  0.0,
+       // right side
+       5.3,  0.0,  -4.0, 1.0, 1.0,  0.0,
+       5.31,  4.5,  -4.0, 1.0, 1.0,  0.0,
+      5.3,  0.0,  1.0, 1.0, 1.0,  0.0,
+       5.31,  4.5,  1.0, 1.0, 1.0,  0.0,
+
+       // second floor parket
+         -5.0,  4.5,  -4.0, 1.0, 1.0,  0.0,
+        5.3,  4.51,  -4.0, 1.0, 1.0,  0.0,
+       -5.0,  4.5,  1.0, 1.0, 1.0,  0.0,
+        5.3,  4.51,  1.0, 1.0, 1.0,  0.0,
+
+
 
     };
     unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
@@ -302,10 +338,20 @@ int main()
 
         houseShader.setMat4("uM", houseModel);
         glBindVertexArray(houseVAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 8, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 12, 8);
+        glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 24, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 28, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 32, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 36, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 40, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 44, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 48, 4);
+
 
         glUseProgram(0);
         glEnable(GL_CULL_FACE);
@@ -352,8 +398,8 @@ int main()
         currentTime = glfwGetTime();
         float orbitAngle = currentTime * orbitSpeed;
         glm::vec3 treePosition = glm::vec3(0.5f, 0.0f, 0.0f);  // Set the actual position of the tree
-        float dogX = treePosition.x + glm::cos(orbitAngle) * orbitRadius;
-        float dogZ = treePosition.z + glm::sin(orbitAngle) * orbitRadius;
+        float dogX = 1.0f +  glm::cos(orbitAngle) * orbitRadius;
+        float dogZ = -4.0f + glm::sin(orbitAngle) * orbitRadius;
 
         glm::vec3 dogScale = glm::vec3(0.03f);
 
