@@ -151,6 +151,7 @@
     <None Include="chimney.frag" />
     <None Include="cube.frag" />
     <None Include="cube.vert" />
+    <None Include="door.frag" />
     <None Include="ground.frag" />
     <None Include="house.frag" />
     <None Include="name.frag" />

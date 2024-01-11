@@ -131,6 +131,7 @@ int main()
     Shader simpleShader("simple.vert", "simple.frag");
     Shader groundShader("basic.vert", "ground.frag");
     Shader chimneyShader("basic.vert", "chimney.frag");
+    Shader doorShader("basic.vert", "door.frag");
 
     sunShader.use();
 
@@ -140,6 +141,9 @@ int main()
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     sunShader.setMat4("uV", camera.GetViewMatrix());
 
+    doorShader.use();
+    doorShader.setMat4("uP", projection);
+    doorShader.setMat4("uV", camera.GetViewMatrix());
     chimneyShader.use();
     chimneyShader.setMat4("uP", projection);
     chimneyShader.setMat4("uV", camera.GetViewMatrix());
@@ -182,7 +186,12 @@ int main()
          -25.0,  0.0,  -20.0, 0.0, 1.0,  0.0,
          25.0,  0.0,  -20.0, 0.0, 1.0,  0.0,
     };
-
+    float doorVertices[] = {
+           -0.4, -0.0,  1.01f, 1.0f, 0.0f, 0.0,
+           0.4, -0.0,   1.01f, 1.0f, 0.0f, 0.0,
+           -0.4,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+           0.4,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+    };
     float houseVertices[] =
     {
         // First Floor (Yellow)
@@ -196,11 +205,7 @@ int main()
           4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
          -4.2,  8.2,  1.0, 1.0, 1.0,  0.0,
           4.2,  8.2,  1.0, 1.0, 1.0,  0.0,
-           // door red
-           -0.1, -0.0,  1.0f, 1.0f, 0.0f, 0.0,
-           0.1, -0.0,   1.0f, 1.0f, 0.0f, 0.0,
-           -0.1,  -0.1,   1.0f, 1.0f, 0.0f,  0.0,
-           0.1,  -0.1,   1.0f, 1.0f, 0.0f,  0.0,
+           
         // first floor
         -5.0, -0.0,  -4.0, 1.0, 1.0, 0.0,
          5.3, -0.0,  -4.0, 1.0, 1.0, 0.0,
@@ -281,6 +286,24 @@ int main()
 
     };
     unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
+    unsigned int doorVao, doorVbo;
+    glGenVertexArrays(1, &doorVao);
+    glBindVertexArray(doorVao);
+
+    glGenBuffers(1, &doorVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, doorVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(doorVertices), doorVertices, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
     unsigned int houseVAO, houseVBO;
     glGenVertexArrays(1, &houseVAO);
     glBindVertexArray(houseVAO);
@@ -369,7 +392,11 @@ int main()
         unifiedShader.use();
         unifiedShader.setMat4("uV", camera.GetViewMatrix());
         glUseProgram(0);
-        
+
+        doorShader.use();
+        doorShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
+
         groundShader.use();
         glm::mat4 groundModel = glm::mat4(1.0f);
         groundModel = glm::translate(groundModel, glm::vec3(2.0f, 0.0f, -5.0f));
@@ -398,10 +425,16 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 36, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 40, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 44, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 48, 4);
-
 
         glUseProgram(0);
+        glm::mat4 doorModel = glm::mat4(1.0f);
+        doorModel = glm::translate(doorModel, glm::vec3(2.0f, 0.0f, -5.0f));
+        doorShader.use();
+        doorShader.setMat4("uM", doorModel);
+        glBindVertexArray(doorVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glUseProgram(0);
+
         glm::mat4 chimneyModel = glm::mat4(1.0f);
         chimneyModel = glm::translate(chimneyModel, glm::vec3(2.0f, 0.0f, -5.0f));
         chimneyShader.use();
