@@ -16,26 +16,43 @@
 
 #include "shader.hpp"
 #include "model.hpp"
+#include "camera.cpp"
 
 const unsigned int wWidth = 1000;
 const unsigned int wHeight = 800;
-static unsigned loadImageToTexture(const char* filePath); //Ucitavanje teksture, izdvojeno u funkciju
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 cameraRight = glm::cross(cameraFront, cameraUp);
+static unsigned loadImageToTexture(const char* filePath);
 
-float cameraSpeed = 0.09f;
-float pitch = 0.0f;
-float yaw = 0.0f;
+
 float orbitSpeed = 0.5f;
 float orbitRadius = 5.0f;
 glm::vec3 sunPosition = glm::vec3(0.0f, 9.0f, 0.0f); 
 float sunRotationSpeed = 40.0f;  
 float sunPulseSpeed = 2.5f;     
 float sunMinScale = 0.6f;       
-float sunMaxScale = 1.0f;       
+float sunMaxScale = 1.0f;  
 
+float lastX = wWidth / 2.0f;
+float lastY = wHeight / 2.0f;
+
+bool firstMouse = true;
+Camera camera(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
 
 int main()
 {
@@ -64,8 +81,8 @@ int main()
         std::cout << "GLEW fail! :(\n" << std::endl;
         return -3;
     }
+    glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 #pragma endregion
 #pragma region name
     Shader nameShader("name.vert", "name.frag");
@@ -113,19 +130,20 @@ int main()
     Shader simpleShader("simple.vert", "simple.frag");
 
     sunShader.use();
- 
+
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
     sunShader.setMat4("uP", projection);
 
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    sunShader.setMat4("uV", view);
+    sunShader.setMat4("uV", camera.GetViewMatrix());
 
     unifiedShader.use();
+    unifiedShader.setMat4("uV", camera.GetViewMatrix());
+
     unifiedShader.setVec3("uLightPos", 0, 1, 3);
-    unifiedShader.setVec3("uViewPos", 0, 0, 5);
+    unifiedShader.setVec3("uViewPos",camera.Position);
     unifiedShader.setVec3("uLightColor", 1, 1, 1);
     unifiedShader.setMat4("uP", projection);
-    unifiedShader.setMat4("uV", view);
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
 
@@ -155,45 +173,24 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
        
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-            pitch += 1.0f;
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-            pitch -= 1.0f;
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            yaw += 1.0f;
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            yaw -= 1.0f;
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraFront;
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraFront;
+            camera.ProcessKeyboard(FORWARD, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            cameraPos -= cameraSpeed * cameraFront;
+            camera.ProcessKeyboard(BACKWARD, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            camera.ProcessKeyboard(LEFT, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraUp;
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-            cameraPos -= cameraSpeed * cameraUp;
+            camera.ProcessKeyboard(RIGHT, 0.02f);
 
-        if (yaw > 360.0f)
-            yaw -= 360.0f;
-        if (yaw < 0.0f)
-            yaw += 360.0f;
-
-        if (cameraPos.y < 0.05)
-            cameraPos.y = 0.05;
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        unifiedShader.use();
+        unifiedShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
 
         float currentTime = glfwGetTime();
 
@@ -207,43 +204,21 @@ int main()
         sunModel = glm::scale(sunModel, glm::vec3(sunScale));
         unifiedShader.use();
         unifiedShader.setBool("displayWhite", true);
+        unifiedShader.setVec3("uViewPos", camera.Position);
+
         unifiedShader.setMat4("uM", sunModel);
         sun.Draw(unifiedShader);
         unifiedShader.setBool("displayWhite", false);
-
         glUseProgram(0);
 
-
-
-      
-        unifiedShader.use();
-        // Initialize camera front vector
-        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-        // Calculate the right vector using cross product
-        glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
-        // Create a rotation matrix for pitch
-        glm::mat4 pitchRotation = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), right);
-        glm::mat4 yawRotation = glm::rotate(glm::mat4(1.0f), glm::radians(yaw), cameraUp);
-
-        // Combine the pitch and yaw rotations
-        glm::mat4 orientation = yawRotation * pitchRotation;
-
-        // Rotate the camera front vector using the combined rotation matrix
-        cameraFront = glm::mat3(orientation) * cameraFront;
-
-        // Update view matrix using glm::lookAt
-        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        unifiedShader.setMat4("uV", view);
-        glUseProgram(0);
 
         unifiedShader.use();
         unifiedShader.setMat4("uM", model);
+
         tree.Draw(unifiedShader);
         glUseProgram(0);
 
         unifiedShader.use();
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        unifiedShader.setMat4("uV", view);
 
         glm::vec3 manPosition = glm::vec3(3.0f, 0.0f, -3.0f);
         glm::mat4 manModel = glm::mat4(1.0f);
@@ -281,6 +256,7 @@ int main()
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         nameShader.use();
+
         glBindVertexArray(nameVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, name);
