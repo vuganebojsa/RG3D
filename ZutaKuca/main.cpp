@@ -124,6 +124,7 @@ int main()
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
     Model man("models/Man/man.obj");
     Model sun("models/Sun/sun.obj");
+    Model fence("models/Ograda/fence.obj");
 
     Shader unifiedShader("basic.vert", "basic.frag");
     Shader sunShader("basic.vert", "cube.frag");
@@ -429,6 +430,8 @@ int main()
     glCullFace(GL_BACK);
 
     float smokeTranslate = 0.0f;
+    float sunColor = 1.0f;
+
     while (!glfwWindowShouldClose(window))
     {
        
@@ -552,11 +555,15 @@ int main()
         float sunPulse = 0.5f * (sin(currentTime * sunPulseSpeed) + 1.0f);
         float sunScale = glm::mix(sunMinScale, sunMaxScale, sunPulse);
         glm::mat4 sunModel = glm::mat4(1.0f);
+
         sunModel = glm::translate(sunModel, sunPosition);
         sunModel = glm::rotate(sunModel, glm::radians(sunRotation), glm::vec3(0.0f, 1.0f, 0.0f));
         sunModel = glm::scale(sunModel, glm::vec3(sunScale));
         unifiedShader.use();
         unifiedShader.setBool("displayWhite", true);
+        sunColor = 1.0f - 0.7f * sin(glfwGetTime());
+
+        unifiedShader.setVec4("uSunColor", glm::vec4(1.0f, sunColor, 0.0f, 1.0f));
         unifiedShader.setVec3("uViewPos", camera.Position);
 
         unifiedShader.setMat4("uM", sunModel);
@@ -569,6 +576,45 @@ int main()
         unifiedShader.setMat4("uM", model);
 
         tree.Draw(unifiedShader);
+        glUseProgram(0);
+
+
+        unifiedShader.use();
+
+        glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 6.0f);
+        glm::mat4 fenceModel = glm::mat4(1.0f);
+        fenceModel = glm::translate(fenceModel, fencePosition);
+
+        // Rotate the fence by 40 degrees around the x-axis
+        float fenceRotationAngle = glm::radians(10.0f);
+        fenceModel = glm::rotate(fenceModel, fenceRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // Adjust the scale as needed
+        glm::vec3 fenceScale = glm::vec3(15.0f, 1.0f, 1.0f);
+        fenceModel = glm::scale(fenceModel, fenceScale);
+
+        unifiedShader.setMat4("uM", fenceModel);
+
+        fence.Draw(unifiedShader);
+        glUseProgram(0);
+
+        unifiedShader.use();
+
+         fencePosition = glm::vec3(5.0f, 0.0f, 6.0f);
+        fenceModel = glm::mat4(1.0f);
+        fenceModel = glm::translate(fenceModel, fencePosition);
+
+        // Rotate the fence by 40 degrees around the x-axis
+        fenceRotationAngle = glm::radians(10.0f);
+        fenceModel = glm::rotate(fenceModel, fenceRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // Adjust the scale as needed
+        fenceScale = glm::vec3(12.8f, 1.0f, 1.0f);
+        fenceModel = glm::scale(fenceModel, fenceScale);
+
+        unifiedShader.setMat4("uM", fenceModel);
+
+        fence.Draw(unifiedShader);
         glUseProgram(0);
 
         unifiedShader.use();

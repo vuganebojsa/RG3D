@@ -11,12 +11,14 @@ uniform vec3 uLightColor;
 
 uniform sampler2D uDiffMap1;
 uniform bool displayWhite = false;
+uniform vec4 uSunColor;
+
 void main()
 {    
 
      if (displayWhite) {
         // Display white color if the condition is true
-        FragColor = vec4(0.9, 0.9, 0.9, 1.0);
+        FragColor = uSunColor;
     } else {
         // Your existing lighting calculations
         float ambientStrength = 0.1;
