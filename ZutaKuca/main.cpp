@@ -130,6 +130,7 @@ int main()
     Shader houseShader("basic.vert", "house.frag");
     Shader simpleShader("simple.vert", "simple.frag");
     Shader groundShader("basic.vert", "ground.frag");
+    Shader chimneyShader("basic.vert", "chimney.frag");
 
     sunShader.use();
 
@@ -138,6 +139,10 @@ int main()
 
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     sunShader.setMat4("uV", camera.GetViewMatrix());
+
+    chimneyShader.use();
+    chimneyShader.setMat4("uP", projection);
+    chimneyShader.setMat4("uV", camera.GetViewMatrix());
 
     unifiedShader.use();
     unifiedShader.setMat4("uV", camera.GetViewMatrix());
@@ -248,8 +253,31 @@ int main()
         5.3,  4.49,  -4.0, 1.0, 1.0,  0.0,
        -5.0,  4.5,  1.0, 1.0, 1.0,  0.0,
         5.3,  4.49,  1.0, 1.0, 1.0,  0.0,
+    };
 
+    float chimneyVertices[] =
+    {
+         // Second Floor (Yellow)
+         3.7,  8.2,  -1.0, 1.0, 1.0,  0.0,
+          4.2,  8.2,  -1.0, 1.0, 1.0,  0.0,
+         3.7,  12.4,  -1.0, 1.0, 1.0,  0.0,
+          4.2,  12.4,  -1.0, 1.0, 1.0,  0.0,
 
+          3.7,  8.2,  -2.0, 1.0, 1.0,  0.0,
+           4.2,  8.2,  -2.0, 1.0, 1.0,  0.0,
+          3.7,  12.4,  -2.0, 1.0, 1.0,  0.0,
+           4.2,  12.4,  -2.0, 1.0, 1.0,  0.0,
+
+           // left side of house top
+          3.7,  8.2,  -2.0, 1.0, 1.0,  0.0,
+          3.71,  12.4,  -2.0, 1.0, 1.0,  0.0,
+          3.7,  8.2,  -1.0, 1.0, 1.0,  0.0,
+          3.71,  12.4,  -1.0, 1.0, 1.0,  0.0,
+          // right side
+          4.2,  8.2,  -2.0, 1.0, 1.0,  0.0,
+          4.21,  12.4,  -2.0, 1.0, 1.0,  0.0,
+         4.2,  8.2,  -1.0, 1.0, 1.0,  0.0,
+          4.21,  12.4,  -1.0, 1.0, 1.0,  0.0,
 
     };
     unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
@@ -260,6 +288,24 @@ int main()
     glGenBuffers(1, &houseVBO);
     glBindBuffer(GL_ARRAY_BUFFER, houseVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(houseVertices), houseVertices, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    unsigned int chimneyVao, chimneyVbo;
+    glGenVertexArrays(1, &chimneyVao);
+    glBindVertexArray(chimneyVao);
+
+    glGenBuffers(1, &chimneyVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, chimneyVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(chimneyVertices), chimneyVertices, GL_STATIC_DRAW);
 
     // Set up attribute pointers for the house
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
@@ -311,7 +357,9 @@ int main()
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        chimneyShader.use();
+        chimneyShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
         houseShader.use();
         houseShader.setMat4("uV", camera.GetViewMatrix());
         glUseProgram(0);
@@ -352,6 +400,15 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 44, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 48, 4);
 
+
+        glUseProgram(0);
+        glm::mat4 chimneyModel = glm::mat4(1.0f);
+        chimneyModel = glm::translate(chimneyModel, glm::vec3(2.0f, 0.0f, -5.0f));
+        chimneyShader.use();
+
+        chimneyShader.setMat4("uM", chimneyModel);
+        glBindVertexArray(chimneyVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 16);
 
         glUseProgram(0);
         glEnable(GL_CULL_FACE);

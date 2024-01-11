@@ -148,6 +148,7 @@
   <ItemGroup>
     <None Include="basic.frag" />
     <None Include="basic.vert" />
+    <None Include="chimney.frag" />
     <None Include="cube.frag" />
     <None Include="cube.vert" />
     <None Include="ground.frag" />
