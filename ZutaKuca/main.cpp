@@ -134,6 +134,7 @@ int main()
 
     // omogucavanje dubine
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
 
@@ -164,9 +165,7 @@ int main()
             cameraPos += cameraSpeed * cameraUp;
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
             cameraPos -= cameraSpeed * cameraUp;
-         
 
-        // Ensure yaw stays within a reasonable range
         if (yaw > 360.0f)
             yaw -= 360.0f;
         if (yaw < 0.0f)
