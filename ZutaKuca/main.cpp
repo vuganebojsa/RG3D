@@ -156,7 +156,7 @@ int main()
     unifiedShader.setVec3("uLightColor", 1, 1, 1);
     unifiedShader.setMat4("uP", projection);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-3.5f, 0.0f, 0.0f));
 
     houseShader.use();
     houseShader.setMat4("uV", camera.GetViewMatrix());
@@ -382,6 +382,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         chimneyShader.use();
         chimneyShader.setMat4("uV", camera.GetViewMatrix());
+        chimneyShader.setVec4("chColooor", glm::vec4(0.6, 0.4, 0.2, 1.0));
         glUseProgram(0);
         houseShader.use();
         houseShader.setMat4("uV", camera.GetViewMatrix());
@@ -487,18 +488,20 @@ int main()
        
         currentTime = glfwGetTime();
         float orbitAngle = currentTime * orbitSpeed;
-        glm::vec3 treePosition = glm::vec3(0.5f, 0.0f, 0.0f);  // Set the actual position of the tree
         float dogX = 1.0f +  glm::cos(orbitAngle) * orbitRadius;
         float dogZ = -4.0f + glm::sin(orbitAngle) * orbitRadius;
 
         glm::vec3 dogScale = glm::vec3(0.03f);
 
         // Update the model matrix for the dog's position and scale
+        float orientationAngle = -glm::atan(dogZ, dogX);  // Negate the angle
+
+        // Update the model matrix for the dog's position, scale, and rotation
         glm::mat4 dogModel = glm::mat4(1.0f);
         dogModel = glm::translate(dogModel, glm::vec3(dogX, 0.0f, dogZ));
+        dogModel = glm::rotate(dogModel, orientationAngle, glm::vec3(0.0f, 1.0f, 0.0f));  // Rotate around the y-axis
+        dogModel = glm::rotate(dogModel, glm::radians(-124.0f), glm::vec3(1.0f, 1.0f, 1.0f));  // Additional rotation
         dogModel = glm::scale(dogModel, dogScale);
-        dogModel = glm::rotate(dogModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
         // Set the model matrix in the shader
         unifiedShader.setMat4("uM", dogModel);
 
