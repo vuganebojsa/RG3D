@@ -39,6 +39,8 @@
     <None Include="name.frag" />
     <None Include="simple.vert" />
     <None Include="simple.frag" />
+    <None Include="cube.frag" />
+    <None Include="cube.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.hpp">

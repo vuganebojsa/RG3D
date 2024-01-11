@@ -30,6 +30,11 @@ float pitch = 0.0f;
 float yaw = 0.0f;
 float orbitSpeed = 0.5f;
 float orbitRadius = 5.0f;
+glm::vec3 sunPosition = glm::vec3(0.0f, 9.0f, 0.0f); 
+float sunRotationSpeed = 40.0f;  
+float sunPulseSpeed = 2.5f;     
+float sunMinScale = 0.6f;       
+float sunMaxScale = 1.0f;       
 
 
 int main()
@@ -100,20 +105,26 @@ int main()
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
     Model man("models/Man/man.obj");
+    Model sun("models/Sun/sun.obj");
     //Tjemena i baferi su definisani u model klasi i naprave se pri stvaranju objekata
 
     Shader unifiedShader("basic.vert", "basic.frag");
+    Shader sunShader("basic.vert", "cube.frag");
     Shader simpleShader("simple.vert", "simple.frag");
 
-    //Render petlja
+    sunShader.use();
+ 
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
+    sunShader.setMat4("uP", projection);
+
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    sunShader.setMat4("uV", view);
+
     unifiedShader.use();
     unifiedShader.setVec3("uLightPos", 0, 1, 3);
     unifiedShader.setVec3("uViewPos", 0, 0, 5);
     unifiedShader.setVec3("uLightColor", 1, 1, 1);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
     unifiedShader.setMat4("uP", projection);
-
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     unifiedShader.setMat4("uV", view);
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
@@ -133,29 +144,6 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
-    float floorVertices[] =
-    {
-        // floor
-        -100, 0, -100, 0.0f, 1.0f, 0.0f,
-        100, 0, -100, 0.0f, 1.0f, 0.0f,
-        -100, 0, 100, 0.0f, 1.0f, 0.0f,
-        100, 0, 100, 0.0f, 1.0f, 0.0f,
-    };
-    unsigned int floorVao, floorVbo;
-    glGenVertexArrays(1, &floorVao);
-    glBindVertexArray(floorVao);
-
-    glGenBuffers(1, &floorVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, floorVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(floorVertices), floorVertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the floor
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
 
     // omogucavanje dubine
@@ -207,14 +195,27 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        float currentTime = glfwGetTime();
 
-        simpleShader.use();
-      
-        glBindVertexArray(floorVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindVertexArray(0);
+        // Update sun
+        float sunRotation = currentTime * sunRotationSpeed;
+        float sunPulse = 0.5f * (sin(currentTime * sunPulseSpeed) + 1.0f);
+        float sunScale = glm::mix(sunMinScale, sunMaxScale, sunPulse);
+        glm::mat4 sunModel = glm::mat4(1.0f);
+        sunModel = glm::translate(sunModel, sunPosition);
+        sunModel = glm::rotate(sunModel, glm::radians(sunRotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        sunModel = glm::scale(sunModel, glm::vec3(sunScale));
+        unifiedShader.use();
+        unifiedShader.setBool("displayWhite", true);
+        unifiedShader.setMat4("uM", sunModel);
+        sun.Draw(unifiedShader);
+        unifiedShader.setBool("displayWhite", false);
+
         glUseProgram(0);
 
+
+
+      
         unifiedShader.use();
         // Initialize camera front vector
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -255,7 +256,7 @@ int main()
 
         unifiedShader.use();
        
-        float currentTime = glfwGetTime();
+        currentTime = glfwGetTime();
         float orbitAngle = currentTime * orbitSpeed;
         glm::vec3 treePosition = glm::vec3(0.5f, 0.0f, 0.0f);  // Set the actual position of the tree
         float dogX = treePosition.x + glm::cos(orbitAngle) * orbitRadius;
