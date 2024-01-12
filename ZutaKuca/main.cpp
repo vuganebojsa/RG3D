@@ -298,35 +298,35 @@ int main()
     };
     float smokeVertices[] =
     {
-        3.9,  12.27,  -1.3, 1.0, 1.0,  0.0,
-         4.1,  12.27,  -1.3, 1.0, 1.0,  0.0,
-        3.9,  12.7,  -1.3, 1.0, 1.0,  0.0,
-         4.1,  12.7,  -1.3, 1.0, 1.0,  0.0,
+        3.85,  12.27,  -1.2, 1.0, 1.0,  0.0,
+         4.15,  12.27,  -1.2, 1.0, 1.0,  0.0,
+        3.85,  12.7,  -1.2, 1.0, 1.0,  0.0,
+         4.15,  12.7,  -1.2, 1.0, 1.0,  0.0,
 
-         3.9,  12.27,  -1.6, 1.0, 1.0,  0.0,
-          4.1,  12.27,  -1.6, 1.0, 1.0,  0.0,
-         3.9,  12.7,  -1.6, 1.0, 1.0,  0.0,
-          4.1,  12.7,  -1.6, 1.0, 1.0,  0.0,
+         3.85,  12.27,  -1.6, 1.0, 1.0,  0.0,
+          4.15,  12.27,  -1.6, 1.0, 1.0,  0.0,
+         3.85,  12.7,  -1.6, 1.0, 1.0,  0.0,
+          4.15,  12.7,  -1.6, 1.0, 1.0,  0.0,
 
-         3.9,  12.27,  -1.6, 1.0, 1.0,  0.0,
-         3.91,  12.7,  -1.6, 1.0, 1.0,  0.0,
-         3.9,  12.27,  -1.3, 1.0, 1.0,  0.0,
-         3.91,  12.7,  -1.3, 1.0, 1.0,  0.0,
+         3.85,  12.27,  -1.6, 1.0, 1.0,  0.0,
+         3.96,  12.7,  -1.6, 1.0, 1.0,  0.0,
+         3.85,  12.27,  -1.2, 1.0, 1.0,  0.0,
+         3.96,  12.7,  -1.2, 1.0, 1.0,  0.0,
 
-         4.1,  12.27,  -1.6, 1.0, 1.0,  0.0,
-         4.11,  12.7,  -1.6, 1.0, 1.0,  0.0,
-        4.1,  12.27,  -1.3, 1.0, 1.0,  0.0,
-         4.11,  12.7,  -1.3, 1.0, 1.0,  0.0,
+         4.15,  12.27,  -1.6, 1.0, 1.0,  0.0,
+         4.16,  12.7,  -1.6, 1.0, 1.0,  0.0,
+        4.15,  12.27,  -1.2, 1.0, 1.0,  0.0,
+         4.16,  12.7,  -1.2, 1.0, 1.0,  0.0,
 
-          3.9,  12.27,  -1.6, 1.0, 1.0,  0.0,
-          4.1,  12.271,  -1.3, 1.0, 1.0,  0.0,
-         3.9,  12.31,  -1.6, 1.0, 1.0,  0.0,
-          4.1,  12.31,  -1.3, 1.0, 1.0,  0.0,
+          3.85,  12.27,  -1.6, 1.0, 1.0,  0.0,
+          4.15,  12.271,  -1.2, 1.0, 1.0,  0.0,
+         3.85,  12.31,  -1.6, 1.0, 1.0,  0.0,
+          4.15,  12.31,  -1.2, 1.0, 1.0,  0.0,
 
-         3.9,  12.7,  -1.6, 1.0, 1.0,  0.0,
-          4.1,  12.7,  -1.3, 1.0, 1.0,  0.0,
-         3.9,  12.71,  -1.6, 1.0, 1.0,  0.0,
-          4.1,  12.71,  -1.3, 1.0, 1.0,  0.0,
+         3.85,  12.7,  -1.6, 1.0, 1.0,  0.0,
+          4.15,  12.7,  -1.3, 1.0, 1.0,  0.0,
+         3.85,  12.71,  -1.6, 1.0, 1.0,  0.0,
+          4.15,  12.71,  -1.3, 1.0, 1.0,  0.0,
 
     };
 #pragma endregion
@@ -434,6 +434,10 @@ int main()
     float sunColor = 1.0f;
     float doorRotationAngle = 0.0f;
     float doorFlag = 1;
+    float randomX = 0;
+    float randomZ = 0;
+    std::vector<float> smokeTranslates = { -1.0f, 0.0f, 1.0f };
+
     while (!glfwWindowShouldClose(window))
     {
        
@@ -526,27 +530,42 @@ int main()
         float smokeTime = glfwGetTime();
         float timeSinceLastMove = std::fmod(smokeTime, 1.0f);
 
-        if (timeSinceLastMove < 0.03f) { 
-            smokeTranslate += 0.5f; 
-        }
-        if (smokeTranslate > 3.0f) {
-            smokeTranslate = 0.0f;
+       
+        for (int i = 0; i < smokeTranslates.size(); ++i) {
+            if (timeSinceLastMove < 0.03f) {
+                smokeTranslates[i] += 0.7f;
+                randomX = (static_cast<float>(rand()) / RAND_MAX) * 0.2f - 0.1f;
+                randomZ = (static_cast<float>(rand()) / RAND_MAX) * 0.2f - 0.1f;
+            }
+            if (smokeTranslates[0] > 3.0f) {
+                smokeTranslates = { 0.0f, 0.7f, 1.4f };
+            }
         }
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glm::mat4 smokeModel = glm::mat4(1.0f);
-        smokeModel = glm::translate(smokeModel, glm::vec3(2.0f, smokeTranslate, -5.0f));
-        smokeShader.use();
 
-        smokeShader.setMat4("uM", smokeModel);
-        glBindVertexArray(smokeVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
-        glDrawArrays(GL_TRIANGLE_STRIP, 8, 8);
-        glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+        for (int i = 0; i < smokeTranslates.size(); ++i) {
+            smokeModel = glm::mat4(1.0f);
+            // Adjust translation on x and z axes for each plume
+           
+
+            // Adjust translation on x, y, and z axes for each plume
+            smokeModel = glm::translate(smokeModel, glm::vec3(2.0f + randomX, smokeTranslates[i], -5.0f + randomZ));
+
+            smokeShader.use();
+            smokeShader.setMat4("uM", smokeModel);
+
+            glBindVertexArray(smokeVao);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+            glDrawArrays(GL_TRIANGLE_STRIP, 8, 8);
+            glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
+            glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+            glUseProgram(0);
+        }
+
         glDisable(GL_BLEND);
 
-        glUseProgram(0);
 
         glm::mat4 doorModel = glm::mat4(1.0f);
         doorModel = glm::translate(doorModel, glm::vec3(2.0f, 0.0f, -5.0f));
