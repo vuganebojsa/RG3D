@@ -135,6 +135,7 @@ int main()
     Shader chimneyShader("basic.vert", "chimney.frag");
     Shader doorShader("basic.vert", "door.frag");
     Shader smokeShader("basic.vert", "smoke.frag");
+    Shader windowShader("basic.vert", "window.frag");
 
 
 
@@ -146,6 +147,9 @@ int main()
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     sunShader.setMat4("uV", camera.GetViewMatrix());
 
+    windowShader.use();
+    windowShader.setMat4("uP", projection);
+    windowShader.setMat4("uV", camera.GetViewMatrix());
     smokeShader.use();
     smokeShader.setMat4("uP", projection);
     smokeShader.setMat4("uV", camera.GetViewMatrix());
@@ -202,6 +206,30 @@ int main()
            0.4, -0.0,   1.01f, 1.0f, 0.0f, 0.0,
            -0.4,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
            0.4,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+    };
+    float windowVerticesLeftBottom[] = {
+          -2.2, 0.8,  1.01f, 1.0f, 0.0f, 0.0,
+          -0.5, 0.8,   1.01f, 1.0f, 0.0f, 0.0,
+          -2.2,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+          -0.5,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+    };
+    float windowVerticesRightBottom[] = {
+          0.5, 0.8,  1.01f, 1.0f, 0.0f, 0.0,
+          2.2, 0.8,   1.01f, 1.0f, 0.0f, 0.0,
+          0.5,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+          2.2,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
+    };
+    float windowVerticesLeftTop[] = {
+          -2.2, 5.4,  1.01f, 1.0f, 0.0f, 0.0,
+          -0.5, 5.4,   1.01f, 1.0f, 0.0f, 0.0,
+          -2.2,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
+          -0.5,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
+    };
+    float windowVerticesRightTop[] = {
+          0.5, 5.4,  1.01f, 1.0f, 0.0f, 0.0,
+          2.2, 5.4,   1.01f, 1.0f, 0.0f, 0.0,
+          0.5,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
+          2.2,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
     };
     float houseVertices[] =
     {
@@ -334,6 +362,79 @@ int main()
 
 
     unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
+    
+    unsigned int windowLeftBottomVao, windowLeftBottomVbo;
+    glGenVertexArrays(1, &windowLeftBottomVao);
+    glBindVertexArray(windowLeftBottomVao);
+
+    glGenBuffers(1, &windowLeftBottomVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, windowLeftBottomVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesLeftBottom), windowVerticesLeftBottom, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    unsigned int windowLeftTopVao, windowLeftTopVbo;
+    glGenVertexArrays(1, &windowLeftTopVao);
+    glBindVertexArray(windowLeftTopVao);
+
+    glGenBuffers(1, &windowLeftTopVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, windowLeftTopVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesLeftTop), windowVerticesLeftTop, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    unsigned int windowRightTopVao, windowRightTopVbo;
+    glGenVertexArrays(1, &windowRightTopVao);
+    glBindVertexArray(windowRightTopVao);
+
+    glGenBuffers(1, &windowRightTopVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, windowRightTopVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesRightTop), windowVerticesRightTop, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    unsigned int windowRightBottomVao, windowRightBottomVbo;
+    glGenVertexArrays(1, &windowRightBottomVao);
+    glBindVertexArray(windowRightBottomVao);
+
+    glGenBuffers(1, &windowRightBottomVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, windowRightBottomVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesRightBottom), windowVerticesRightBottom, GL_STATIC_DRAW);
+
+    // Set up attribute pointers for the house
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Unbind buffers for the house
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     unsigned int smokeVao, smokeVbo;
     glGenVertexArrays(1, &smokeVao);
     glBindVertexArray(smokeVao);
@@ -437,10 +538,11 @@ int main()
     float randomX = 0;
     float randomZ = 0;
     std::vector<float> smokeTranslates = { -1.0f, 0.0f, 1.0f };
-
+    bool isTransparent = false;
     while (!glfwWindowShouldClose(window))
     {
-       
+#pragma region Keys
+
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -451,6 +553,13 @@ int main()
             camera.ProcessKeyboard(LEFT, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             camera.ProcessKeyboard(RIGHT, 0.02f);
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        {
+            isTransparent = false;
+        }
+        if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+            isTransparent = true;
+        }
         if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
         {
             
@@ -463,16 +572,22 @@ int main()
                doorRotationAngle -= 20.0f * 0.03;
              
         }
+#pragma endregion
+
         if (doorRotationAngle > 60) {
             doorRotationAngle = 60;
         }
         if (doorRotationAngle < 0) {
             doorRotationAngle = 0;
         }
+
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        windowShader.use();
+        windowShader.setMat4("uV", camera.GetViewMatrix());
+        glUseProgram(0);
 
         smokeShader.use();
         smokeShader.setMat4("uV", camera.GetViewMatrix());
@@ -495,6 +610,38 @@ int main()
         doorShader.use();
         doorShader.setMat4("uV", camera.GetViewMatrix());
         glUseProgram(0);
+
+
+        glm::mat4 windowModel = glm::mat4(1.0f);
+        windowModel = glm::translate(windowModel, glm::vec3(2.0f, 0.0f, -5.0f));
+
+
+        windowShader.use();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if (isTransparent) {
+            windowShader.setBool("enableTransparency", true);
+        }
+        else {
+            windowShader.setBool("enableTransparency", false);
+
+        }
+        windowShader.setMat4("uM", windowModel);
+        glBindVertexArray(windowLeftBottomVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        glBindVertexArray(windowLeftTopVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        glBindVertexArray(windowRightBottomVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        glBindVertexArray(windowRightTopVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glUseProgram(0);
+        glDisable(GL_BLEND);
+
+
 
         groundShader.use();
         glm::mat4 groundModel = glm::mat4(1.0f);
