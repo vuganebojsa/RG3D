@@ -97,7 +97,7 @@ void main()
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     // phase 2: point lights
    for(int i = 0; i < 3; i++){
-        if((i==0 && light1Status == true) || (i == 1 && light2Status==true) || isDogDraw == true){
+        if(light1Status == true || light2Status == true || isDogDraw){
             result += CalcPointLight(pointLights[i], norm, FragPos, viewDir); 
         }
     }

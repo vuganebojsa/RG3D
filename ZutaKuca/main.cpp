@@ -175,10 +175,10 @@ int main()
     lightingShader.setVec3("pointLights[1].color", glm::vec3(1.0, 1.0, 1.0));
     lightingShader.setVec3("pointLights[1].intensity", glm::vec3(1.0, 1.0, 1.0));
 
-    lightingShader.setVec3("pointLights[2].position", glm::vec3(1.0, 1.0, 1.0));
-    lightingShader.setVec3("pointLights[2].ambient", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[2].diffuse", 0.4f, 0.4f, 0.4f);
-    lightingShader.setVec3("pointLights[2].specular", 0.4f, 0.4f, 0.4f);
+    lightingShader.setVec3("pointLights[2].position", pointLightPositions[1]);
+    lightingShader.setVec3("pointLights[2].ambient", 0.2f, 0.2f, 0.2f);
+    lightingShader.setVec3("pointLights[2].diffuse", 1.4f, 1.4f, 1.4f);
+    lightingShader.setVec3("pointLights[2].specular", 1.4f, 1.4f, 1.4f);
     lightingShader.setFloat("pointLights[2].constant", 1.0f);
     lightingShader.setFloat("pointLights[2].linear", 0.09f);
     lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
@@ -736,6 +736,7 @@ int main()
 
 
         }
+
         lightingShader.setMat4("model", windowModel);
         lightingShader.setBool("isWindowDraw", true);
         glBindVertexArray(windowLeftBottomVao);
@@ -750,6 +751,7 @@ int main()
         glBindVertexArray(windowRightTopVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         lightingShader.setBool("isWindowDraw", false);
+ 
 
         glUseProgram(0);
         glDisable(GL_BLEND);
@@ -1085,7 +1087,6 @@ int main()
         glUseProgram(0);
 
 
-        lightingShader.use();
        
         currentTime = glfwGetTime();
         float orbitAngle = currentTime * orbitSpeed;
@@ -1103,6 +1104,8 @@ int main()
         dogModel = glm::rotate(dogModel, orientationAngle, glm::vec3(0.0f, 1.0f, 0.0f));  
         dogModel = glm::rotate(dogModel, glm::radians(-124.0f), glm::vec3(1.0f, 1.0f, 1.0f)); 
         dogModel = glm::scale(dogModel, dogScale);
+        lightingShader.use();
+
         lightingShader.setBool("isDogDraw", true);
 
         lightingShader.setVec3("pointLights[2].position", glm::vec3(dogX, 1.0f, dogZ));
@@ -1111,7 +1114,6 @@ int main()
 
         float intensity = 3.0f + 3.0f * sin(currentTime * pulsation);
 
-        // Set the intensity in your shader
         lightingShader.setVec3("pointLights[2].intensity", glm::vec3(intensity, intensity, intensity));        
  
         lightingShader.setMat4("model", dogModel);
@@ -1147,12 +1149,7 @@ int main()
             lightCubeShader.setMat4("model", cubeModel);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        glm::mat4 cubeModel = glm::mat4(1.0f);
-        cubeModel = glm::translate(cubeModel, glm::vec3(dogX, 0.5f, dogZ));
-        cubeModel = glm::scale(cubeModel, glm::vec3(0.02f));
-        lightCubeShader.setMat4("model", cubeModel);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindVertexArray(0);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
