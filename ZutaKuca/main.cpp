@@ -24,7 +24,7 @@ static unsigned loadImageToTexture(const char* filePath);
 
 
 float orbitSpeed = 0.8f;
-float orbitRadius = 9.0f;
+float orbitRadius = 9.9f;
 glm::vec3 sunPosition = glm::vec3(0.0f, 20.0f, 0.0f); 
 float sunRotationSpeed = 40.0f;  
 float sunPulseSpeed = 2.5f;     
@@ -176,7 +176,7 @@ int main()
     lightingShader.setVec3("pointLights[1].intensity", glm::vec3(1.0, 1.0, 1.0));
 
     lightingShader.setVec3("pointLights[2].position", glm::vec3(1.0, 1.0, 1.0));
-    lightingShader.setVec3("pointLights[2].ambient", 0.2f, 0.2f, 0.2f);
+    lightingShader.setVec3("pointLights[2].ambient", 0.8f, 0.8f, 0.8f);
     lightingShader.setVec3("pointLights[2].diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setVec3("pointLights[2].specular", 0.2f, 0.2f, 0.2f);
     lightingShader.setFloat("pointLights[2].constant", 1.0f);
@@ -190,7 +190,6 @@ int main()
     lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(20.0f)));
     lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
     lightingShader.setVec3("spotLight.color", glm::vec3(1.0,0.0, 1.0));
-
     lightingShader.setVec3("spotLight.ambient", 1.0f, 1.0f, 1.0f);
     lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
     lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
@@ -355,18 +354,7 @@ int main()
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  0.0f,  0.0f
     };
 
-    float groundVertices[] = {
-         -25.0, -0.1,  20.0, 0.0, 1.0, 0.0,
-         25.0, -0.1,  20.0, 0.0, 1.0, 0.0,
-         -25.0,  0.0,  -20.0, 0.0, 1.0,  0.0,
-         25.0,  0.0,  -20.0, 0.0, 1.0,  0.0,
-    };
-    float doorVertices[] = {
-           -0.4, -0.0,  1.01f, 1.0f, 0.0f, 0.0,
-           0.4, -0.0,   1.01f, 1.0f, 0.0f, 0.0,
-           -0.4,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
-           0.4,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
-    };
+
     float windowVerticesLeftBottom[] = {
           -2.2, 0.8,  1.01f, 1.0f, 0.0f, 0.0,
           -0.5, 0.8,   1.01f, 1.0f, 0.0f, 0.0,
@@ -390,73 +378,6 @@ int main()
           2.2, 5.4,   1.01f, 1.0f, 0.0f, 0.0,
           0.5,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
           2.2,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
-    };
-    float houseVertices[] =
-    {
-        // First Floor (Yellow)
-        -5.0, -0.0,  1.0, 1.0, 1.0, 0.0,
-         5.3, -0.0,  1.0, 1.0, 1.0, 0.0,
-         -5.0,  4.5,  1.0, 1.0, 1.0,  0.0,
-         5.3,  4.5,  1.0, 1.0, 1.0,  0.0,
-
-         // Second Floor (Yellow)
-         -4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
-          4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
-         -4.2,  8.2,  1.0, 1.0, 1.0,  0.0,
-          4.2,  8.2,  1.0, 1.0, 1.0,  0.0,
-           
-        // first floor
-        -5.0, -0.0,  -4.0, 1.0, 1.0, 0.0,
-         5.3, -0.0,  -4.0, 1.0, 1.0, 0.0,
-         -5.0,  4.5,  -4.0, 1.0, 1.0,  0.0,
-         5.3,  4.5,  -4.0, 1.0, 1.0,  0.0,
-
-         // Second Floor (Yellow)
-        -4.2,  4.5,  -4.0, 1.0, 1.0,  0.0,
-         4.2,  4.5,  -4.0, 1.0, 1.0,  0.0,
-        -4.2,  8.2,  -4.0, 1.0, 1.0,  0.0,
-         4.2,  8.2,  -4.0, 1.0, 1.0,  0.0,
-
-         // flat roof
-           -4.4,  8.2,  -4.2, 1.0, 1.0,  0.0,
-          4.4,  8.2,  -4.2, 1.0, 1.0,  0.0,
-         -4.4,  8.15,  1.2, 1.0, 1.0,  0.0,
-
-          4.4,  8.15,  1.2, 1.0, 1.0,  0.0,
-
-          // first floor parket
-          -5.0,  0.0,  -4.0, 1.0, 1.0,  0.0,
-         5.3,  0.0,  -4.0, 1.0, 1.0,  0.0,
-        -5.0,  0.01,  1.0, 1.0, 1.0,  0.0,
-         5.3,  0.01,  1.0, 1.0, 1.0,  0.0,
-
-          // left side of house top
-        -4.20,  4.5,  -4.0, 1.0, 1.0,  0.0,
-         -4.21,  8.2,  -4.0, 1.0, 1.0,  0.0,
-        -4.20,  4.5,  1.0, 1.0, 1.0,  0.0,
-         -4.21,  8.2,  1.0, 1.0, 1.0,  0.0,
-         // right side
-         4.2,  4.5,  -4.0, 1.0, 1.0,  0.0,
-         4.21,  8.2,  -4.0, 1.0, 1.0,  0.0,
-        4.2,  4.5,  1.0, 1.0, 1.0,  0.0,
-         4.21,  8.2,  1.0, 1.0, 1.0,  0.0,
-
-         // left side of house botton
-      -4.99,  0.0,  -4.0, 1.0, 1.0,  0.0,
-       -5.0,  4.5,  -4.0, 1.0, 1.0,  0.0,
-      -4.99,  0.0,  1.0, 1.0, 1.0,  0.0,
-       -5.0,  4.5,  1.0, 1.0, 1.0,  0.0,
-       // right side
-       5.3,  0.0,  -4.0, 1.0, 1.0,  0.0,
-       5.29,  4.5,  -4.0, 1.0, 1.0,  0.0,
-      5.3,  0.0,  1.0, 1.0, 1.0,  0.0,
-       5.29,  4.5,  1.0, 1.0, 1.0,  0.0,
-
-       // second floor parket
-         -5.0,  4.5,  -4.0, 1.0, 1.0,  0.0,
-        5.3,  4.49,  -4.0, 1.0, 1.0,  0.0,
-       -5.0,  4.5,  1.0, 1.0, 1.0,  0.0,
-        5.3,  4.49,  1.0, 1.0, 1.0,  0.0,
     };
 
     float chimneyVertices[] =
@@ -637,41 +558,6 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
-    unsigned int doorVao, doorVbo;
-    glGenVertexArrays(1, &doorVao);
-    glBindVertexArray(doorVao);
-
-    glGenBuffers(1, &doorVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, doorVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(doorVertices), doorVertices, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    
-    unsigned int houseVAO, houseVBO;
-    glGenVertexArrays(1, &houseVAO);
-    glBindVertexArray(houseVAO);
-
-    glGenBuffers(1, &houseVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, houseVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(houseVertices), houseVertices, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
     unsigned int chimneyVao, chimneyVbo;
     glGenVertexArrays(1, &chimneyVao);
@@ -691,23 +577,7 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    unsigned int groundVao, groundVbo;
-    glGenVertexArrays(1, &groundVao);
-    glBindVertexArray(groundVao);
-
-    glGenBuffers(1, &groundVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, groundVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(groundVertices), groundVertices, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    
 #pragma endregion
 
     // omogucavanje dubine
@@ -895,7 +765,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, grassSpecularTexture);
         glm::mat4 groundModel = glm::mat4(1.0f);
         groundModel = glm::translate(groundModel, glm::vec3(2.0f, -0.6f, 0.0f));
-        groundModel = glm::scale(groundModel, glm::vec3(49.0, 1.0, 28.0));
+        groundModel = glm::scale(groundModel, glm::vec3(49.0, 1.0, 35.0));
         lightingShader.setMat4("model", groundModel);
         glBindVertexArray(cubeVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
@@ -1163,7 +1033,7 @@ int main()
         glUseProgram(0);
         lightingShader.use();
 
-        glm::vec3 doorPosition = glm::vec3(2.8f, 0.88f, 6.8f);
+        glm::vec3 doorPosition = glm::vec3(2.8f, 0.88f, 7.8f);
         glm::mat4 doorModelF = glm::mat4(1.0f);
         doorModelF = glm::translate(doorModelF, doorPosition);
     
@@ -1178,7 +1048,7 @@ int main()
 
         lightingShader.use();
 
-        glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 7.0f);
+        glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 8.0f);
         glm::mat4 fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
 
@@ -1197,7 +1067,7 @@ int main()
 
         lightingShader.use();
 
-         fencePosition = glm::vec3(4.0f, 0.0f, 7.0f);
+         fencePosition = glm::vec3(4.0f, 0.0f, 8.0f);
         fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
 
@@ -1233,16 +1103,16 @@ int main()
         dogModel = glm::rotate(dogModel, orientationAngle, glm::vec3(0.0f, 1.0f, 0.0f));  
         dogModel = glm::rotate(dogModel, glm::radians(-124.0f), glm::vec3(1.0f, 1.0f, 1.0f)); 
         dogModel = glm::scale(dogModel, dogScale);
+        lightingShader.setBool("isDogDraw", true);
 
         lightingShader.setVec3("pointLights[2].position", glm::vec3(dogX, 1.0f, dogZ));
-        lightingShader.setVec3("pointLights[2].color", glm::vec3(0.0, 0.0, 1.0));
+        lightingShader.setVec3("pointLights[2].color", glm::vec3(1.0, 0.0, 1.0));
         float pulsation = 4.0f; 
 
-        float intensity = 3.0f + 4.0f * sin(currentTime * pulsation);
+        float intensity = 3.0f + 3.0f * sin(currentTime * pulsation);
 
         // Set the intensity in your shader
         lightingShader.setVec3("pointLights[2].intensity", glm::vec3(intensity, intensity, intensity));        
-        lightingShader.setBool("isDogDraw", true);
  
         lightingShader.setMat4("model", dogModel);
         dog.Draw(lightingShader);
@@ -1266,7 +1136,6 @@ int main()
         glBindVertexArray(0);
 
 
-        // we now draw as many light bulbs as we have point lights.
         lightCubeShader.use();
 
         glBindVertexArray(lightCubeVAO);
@@ -1274,10 +1143,16 @@ int main()
         {
             glm::mat4 cubeModel = glm::mat4(1.0f);
             cubeModel = glm::translate(cubeModel, pointLightPositions[i]);
-            cubeModel = glm::scale(cubeModel, glm::vec3(0.2f)); // Make it a smaller cube
+            cubeModel = glm::scale(cubeModel, glm::vec3(0.2f)); 
             lightCubeShader.setMat4("model", cubeModel);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+        glm::mat4 cubeModel = glm::mat4(1.0f);
+        cubeModel = glm::translate(cubeModel, glm::vec3(dogX, 0.5f, dogZ));
+        cubeModel = glm::scale(cubeModel, glm::vec3(0.02f));
+        lightCubeShader.setMat4("model", cubeModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
