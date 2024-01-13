@@ -128,6 +128,7 @@ int main()
     Model sun("models/Sun/sun.obj");
     Model fence("models/Ograda/fence.obj");
     Model door("models/Door/door.obj");
+    Model houseDoor("models/HouseDoor/10057_wooden_door_v3_iterations-2.obj");
 
     Shader lightingShader("basic.vert", "basic.frag");
     Shader lightCubeShader("simple.vert", "simple.frag");
@@ -141,17 +142,16 @@ int main()
 
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-   
-
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
-    lightingShader.setFloat("material.shininess", 32.0f);
+    lightingShader.setFloat("material.shininess", 62.0f);
 
     lightingShader.setVec3("dirLight.direction", 0.0f, -1.0f, 0.0f);
     lightingShader.setVec3("dirLight.ambient", 0.6f, 0.6f, 0.6f);
     lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.setVec3("dirLight.specular", 0.8f, 0.8f, 0.8f);
+    lightingShader.setVec3("dirLight.color", 1.0f, 1.0f, 1.0f);
 
     lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
     lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
@@ -183,8 +183,20 @@ int main()
     lightingShader.setVec3("pointLights[2].color", glm::vec3(1.0, 1.0, 1.0));
     lightingShader.setVec3("pointLights[2].intensity", glm::vec3(1.0, 1.0, 1.0));
 
-   
+    lightingShader.setVec3("spotLight.position", glm::vec3(2.0f, 4.2f, -2.3f));
+    lightingShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0));
+    lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(20.0f)));
+    lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+    lightingShader.setVec3("spotLight.color", glm::vec3(1.0,0.0, 1.0));
 
+    lightingShader.setVec3("spotLight.ambient", 1.0f, 1.0f, 1.0f);
+    lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+    lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+    lightingShader.setFloat("spotLight.constant", 1.0f);
+    lightingShader.setFloat("spotLight.linear", 0.09f);
+    lightingShader.setFloat("spotLight.quadratic", 0.032f);
+
+    
 
     unsigned wall = loadImageToTexture("res/wall.jpg");
     glBindTexture(GL_TEXTURE_2D, wall);
@@ -192,7 +204,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
-    unsigned wallWindow = loadImageToTexture("res/wallwindow.jpg");
+    unsigned wallWindow = loadImageToTexture("res/wallwindow.png");
     glBindTexture(GL_TEXTURE_2D, wallWindow);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -207,9 +219,21 @@ int main()
 
 
     unsigned grassTexture = loadImageToTexture("res/trava.jpg");
+    unsigned neonTexture = loadImageToTexture("res/neon.jpg");
+    unsigned reflectorTexture = loadImageToTexture("res/chimney.jpg");
     unsigned smokeTexture = loadImageToTexture("res/smoke.png");
     unsigned chimneyTexture = loadImageToTexture("res/chimney.jpg");
     unsigned grassSpecularTexture = loadImageToTexture("res/grassspecular.png");
+    glBindTexture(GL_TEXTURE_2D, reflectorTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, neonTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, smokeTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -782,6 +806,8 @@ int main()
 
 
         lightingShader.use();
+        glDisable(GL_CULL_FACE);
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if (isTransparent) {
@@ -805,6 +831,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glUseProgram(0);
         glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
 
         lightingShader.use();
 
@@ -837,7 +864,7 @@ int main()
 
        
     
-        //glDisable(GL_CULL_FACE);
+
         lightingShader.use();
         lightingShader.setVec3("viewPos", camera.Position);
         glBindVertexArray(cubeVao);
@@ -849,7 +876,6 @@ int main()
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // glm::rotate(sunModel, glm::radians(sunRotation), glm::vec3(0.0f, 1.0f, 0.0f));
 
         houseModel = glm::mat4(1.0f);
         houseModel = glm::translate(houseModel, glm::vec3(8.0f, 2.0f, -6.0f));
@@ -910,10 +936,42 @@ int main()
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, reflectorTexture);
+        glm::mat4 reflector = glm::mat4(1.0f);
+        reflector = glm::translate(reflector, glm::vec3(2.0f, 3.3f, -2.7f));
+        reflector = glm::scale(reflector, glm::vec3(2.0f, 0.2f, 0.2f));
+        lightingShader.setMat4("model", reflector);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, neonTexture);
+        reflector = glm::mat4(1.0f);
+        reflector = glm::translate(reflector, glm::vec3(2.0f, 3.15f, -2.7f));
+        reflector = glm::scale(reflector, glm::vec3(2.0f, 0.1f, 0.2f));
+        lightingShader.setMat4("model", reflector);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        lightingShader.use();
+
+        glm::vec3 houseDoorPosition = glm::vec3(2.0f, 3.2f, -2.9f);
+        glm::mat4 houseDoorModelF = glm::mat4(1.0f);
+        houseDoorModelF = glm::translate(houseDoorModelF, houseDoorPosition);
+
+        glm::vec3 hdoorScale = glm::vec3(0.01f, 0.015f, 0.01f);
+        houseDoorModelF = glm::scale(houseDoorModelF, hdoorScale);
+        houseDoorModelF = glm::rotate(houseDoorModelF, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        lightingShader.setMat4("model", houseDoorModelF);
+
+        houseDoor.Draw(lightingShader);
+
         glUseProgram(0);
         glBindVertexArray(0);
 
