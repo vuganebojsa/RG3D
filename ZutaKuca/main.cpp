@@ -226,6 +226,43 @@ int main()
     unsigned smokeTexture = loadImageToTexture("res/smoke.png");
     unsigned chimneyTexture = loadImageToTexture("res/chimney.jpg");
     unsigned grassSpecularTexture = loadImageToTexture("res/grassspecular.png");
+    unsigned tapestry4Texture = loadImageToTexture("res/tapestry4.jpg");
+    unsigned tapestry3Texture = loadImageToTexture("res/tapestry3.jpg");
+    unsigned tapestry5Texture = loadImageToTexture("res/tapestry5.jpg");
+    unsigned tapestry6Texture = loadImageToTexture("res/tapestry6.jpg");
+    unsigned tapestry1Texture = loadImageToTexture("res/tapestry1.jpg");
+    unsigned tapestry2Texture = loadImageToTexture("res/tapestry2.jpg");
+    glBindTexture(GL_TEXTURE_2D, tapestry4Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, tapestry3Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, tapestry2Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, tapestry1Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, tapestry5Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, tapestry6Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     glBindTexture(GL_TEXTURE_2D, reflectorTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -849,10 +886,7 @@ int main()
         glUseProgram(0);
 
        
-    
-
         lightingShader.use();
-        lightingShader.setVec3("viewPos", camera.Position);
         glBindVertexArray(cubeVao);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, wall);
@@ -924,6 +958,62 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry1Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(-3.9f, 2.15f, -5.9f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 4.1f, 4.76f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry3Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(7.9f, 2.15f, -5.9f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 4.1f, 4.76f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry2Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(8.3f, 2.15f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 4.1f, 11.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry4Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(-2.9f, 6.4f, -5.9f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 3.9f, 4.76f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry5Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(6.9f, 6.4f, -5.9f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 3.9f, 4.76f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry6Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(8.3f, 6.4f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 3.9f, 9.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, reflectorTexture);
