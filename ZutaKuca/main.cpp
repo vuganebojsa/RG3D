@@ -24,7 +24,7 @@ static unsigned loadImageToTexture(const char* filePath);
 
 
 float orbitSpeed = 0.8f;
-float orbitRadius = 8.6f;
+float orbitRadius = 9.0f;
 glm::vec3 sunPosition = glm::vec3(0.0f, 20.0f, 0.0f); 
 float sunRotationSpeed = 40.0f;  
 float sunPulseSpeed = 2.5f;     
@@ -132,10 +132,10 @@ int main()
     Shader lightingShader("basic.vert", "basic.frag");
     Shader lightCubeShader("simple.vert", "simple.frag");
 
-
     glm::vec3 pointLightPositions[] = {
        glm::vec3(1.0f,  3.8f,  -5.5f),
        glm::vec3(1.0f, 7.8f, -5.5f)
+      
     };
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
 
@@ -160,6 +160,9 @@ int main()
     lightingShader.setFloat("pointLights[0].constant", 1.0f);
     lightingShader.setFloat("pointLights[0].linear", 0.09f);
     lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
+    lightingShader.setVec3("pointLights[0].color", glm::vec3(1.0, 1.0, 1.0));
+    lightingShader.setVec3("pointLights[0].intensity", glm::vec3(1.0, 1.0, 1.0));
+
     lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
     lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
     lightingShader.setVec3("pointLights[1].diffuse", 0.2f, 0.2f, 0.2f);
@@ -167,6 +170,21 @@ int main()
     lightingShader.setFloat("pointLights[1].constant", 1.0f);
     lightingShader.setFloat("pointLights[1].linear", 0.09f);
     lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
+    lightingShader.setVec3("pointLights[1].color", glm::vec3(1.0, 1.0, 1.0));
+    lightingShader.setVec3("pointLights[1].intensity", glm::vec3(1.0, 1.0, 1.0));
+
+    lightingShader.setVec3("pointLights[2].position", glm::vec3(1.0, 1.0, 1.0));
+    lightingShader.setVec3("pointLights[2].ambient", 0.2f, 0.2f, 0.2f);
+    lightingShader.setVec3("pointLights[2].diffuse", 0.2f, 0.2f, 0.2f);
+    lightingShader.setVec3("pointLights[2].specular", 0.2f, 0.2f, 0.2f);
+    lightingShader.setFloat("pointLights[2].constant", 1.0f);
+    lightingShader.setFloat("pointLights[2].linear", 0.09f);
+    lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
+    lightingShader.setVec3("pointLights[2].color", glm::vec3(1.0, 1.0, 1.0));
+    lightingShader.setVec3("pointLights[2].intensity", glm::vec3(1.0, 1.0, 1.0));
+
+   
+
 
     unsigned wall = loadImageToTexture("res/wall.jpg");
     glBindTexture(GL_TEXTURE_2D, wall);
@@ -671,8 +689,12 @@ int main()
                 lastPressTime2 = glfwGetTime(); // Update the last press time
             }
         }
+        camera.MovementSpeed = 8.0f;
+
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            camera.MovementSpeed = 15.0f;
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             camera.ProcessKeyboard(FORWARD, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -804,8 +826,8 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, grassSpecularTexture);
         glm::mat4 groundModel = glm::mat4(1.0f);
-        groundModel = glm::translate(groundModel, glm::vec3(2.0f, -0.5f, -5.0f));
-        groundModel = glm::scale(groundModel, glm::vec3(25.0, 1.0, 25.0));
+        groundModel = glm::translate(groundModel, glm::vec3(2.0f, -0.6f, 0.0f));
+        groundModel = glm::scale(groundModel, glm::vec3(49.0, 1.0, 28.0));
         lightingShader.setMat4("model", groundModel);
         glBindVertexArray(cubeVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
@@ -822,16 +844,16 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, wall);
         glm::mat4 houseModel = glm::mat4(1.0f);
-        houseModel = glm::translate(houseModel, glm::vec3(-4.0f, 0.0f, -6.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 8.6f, 5.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(-4.0f, 2.0f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 4.6f, 5.0f));
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // glm::rotate(sunModel, glm::radians(sunRotation), glm::vec3(0.0f, 1.0f, 0.0f));
 
         houseModel = glm::mat4(1.0f);
-        houseModel = glm::translate(houseModel, glm::vec3(8.0f, 0.0f, -6.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 8.6f, 5.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(8.0f, 2.0f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 4.6f, 5.0f));
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -895,27 +917,7 @@ int main()
         glUseProgram(0);
         glBindVertexArray(0);
 
-        /*glBindVertexArray(houseVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, wall);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 8, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 24, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 28, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 32, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 36, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 40, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 44, 4);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        glUseProgram(0);
-        glBindVertexArray(0);*/
+       
 
         float smokeTime = glfwGetTime();
         float timeSinceLastMove = std::fmod(smokeTime, 1.0f);
@@ -1008,7 +1010,7 @@ int main()
         glUseProgram(0);
         lightingShader.use();
 
-        glm::vec3 doorPosition = glm::vec3(2.8f, 0.88f, 5.74f);
+        glm::vec3 doorPosition = glm::vec3(2.8f, 0.88f, 6.8f);
         glm::mat4 doorModelF = glm::mat4(1.0f);
         doorModelF = glm::translate(doorModelF, doorPosition);
     
@@ -1023,7 +1025,7 @@ int main()
 
         lightingShader.use();
 
-        glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 6.0f);
+        glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 7.0f);
         glm::mat4 fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
 
@@ -1042,7 +1044,7 @@ int main()
 
         lightingShader.use();
 
-         fencePosition = glm::vec3(4.0f, 0.0f, 6.0f);
+         fencePosition = glm::vec3(4.0f, 0.0f, 7.0f);
         fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
 
@@ -1070,19 +1072,31 @@ int main()
         glm::vec3 dogScale = glm::vec3(0.03f);
 
         // Update the model matrix for the dog's position and scale
-        float orientationAngle = -glm::atan(dogZ, dogX);  // Negate the angle
+        float orientationAngle = -glm::atan(dogZ, dogX);  
 
         // Update the model matrix for the dog's position, scale, and rotation
         glm::mat4 dogModel = glm::mat4(1.0f);
         dogModel = glm::translate(dogModel, glm::vec3(dogX, 0.0f, dogZ));
-        dogModel = glm::rotate(dogModel, orientationAngle, glm::vec3(0.0f, 1.0f, 0.0f));  // Rotate around the y-axis
-        dogModel = glm::rotate(dogModel, glm::radians(-124.0f), glm::vec3(1.0f, 1.0f, 1.0f));  // Additional rotation
+        dogModel = glm::rotate(dogModel, orientationAngle, glm::vec3(0.0f, 1.0f, 0.0f));  
+        dogModel = glm::rotate(dogModel, glm::radians(-124.0f), glm::vec3(1.0f, 1.0f, 1.0f)); 
         dogModel = glm::scale(dogModel, dogScale);
-        // Set the model matrix in the shader
+
+        lightingShader.setVec3("pointLights[2].position", glm::vec3(dogX, 1.0f, dogZ));
+        lightingShader.setVec3("pointLights[2].color", glm::vec3(0.0, 0.0, 1.0));
+        float pulsation = 4.0f; 
+
+        float intensity = 2.0f + 4.0f * sin(currentTime * pulsation);
+
+        // Set the intensity in your shader
+        lightingShader.setVec3("pointLights[2].intensity", glm::vec3(intensity, intensity, intensity));        lightingShader.setBool("isDogDraw", true);
+  
+
         lightingShader.setMat4("model", dogModel);
 
         // Draw the dog model
         dog.Draw(lightingShader);
+        lightingShader.setBool("isDogDraw", false);
+
         glUseProgram(0);
 
 
@@ -1113,23 +1127,6 @@ int main()
             lightCubeShader.setMat4("model", cubeModel);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
-        /*lightingShader.use();
-        lightingShader.setVec3("viewPos", camera.Position);
-        glBindVertexArray(cubeVao);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, wall);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.2f, 4.0f, 4.0f));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        glUseProgram(0);
-        glBindVertexArray(0);*/
-
-
 
         glfwSwapBuffers(window);
         glfwPollEvents();
