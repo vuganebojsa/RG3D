@@ -54,6 +54,7 @@ uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLight;
 uniform Material material;
 uniform bool displayWhite;
+uniform bool displaySmoke=false;
 uniform bool light1Status=true;
 uniform bool light2Status=true;
 uniform vec4 uSunColor;
@@ -66,7 +67,10 @@ void main()
 {    
     if(displayWhite){
         FragColor = uSunColor;
-    }else{
+    }else if(displaySmoke){
+        FragColor = vec4(0.8, 0.8, 0.8, 0.4);
+    }
+    else{
      // properties
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
