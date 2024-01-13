@@ -718,6 +718,7 @@ int main()
     float smokeTranslate = 0.0f;
     float sunColor = 1.0f;
     float doorRotationAngle = 0.0f;
+    float doorRotationAngleHouse = 0.0f;
     float doorFlag = 1;
     float randomX = 0;
     float randomZ = 0;
@@ -785,6 +786,18 @@ int main()
                doorRotationAngle -= 20.0f * 0.03;
              
         }
+        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+        {
+
+            doorRotationAngleHouse += 20.0f * 0.03;
+
+
+        }
+        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+        {
+            doorRotationAngleHouse -= 20.0f * 0.03;
+
+        }
         lightingShader.use();
         lightingShader.setBool("light1Status", light1Status);
         lightingShader.setBool("light2Status", light2Status);
@@ -796,7 +809,12 @@ int main()
         if (doorRotationAngle < 0) {
             doorRotationAngle = 0;
         }
-
+        if (doorRotationAngleHouse > 60) {
+            doorRotationAngleHouse = 60;
+        }
+        if (doorRotationAngleHouse < 0) {
+            doorRotationAngleHouse = 0;
+        }
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1040,9 +1058,10 @@ int main()
         glm::mat4 houseDoorModelF = glm::mat4(1.0f);
         houseDoorModelF = glm::translate(houseDoorModelF, houseDoorPosition);
 
-        glm::vec3 hdoorScale = glm::vec3(0.01f, 0.015f, 0.01f);
+        glm::vec3 hdoorScale = glm::vec3(0.02f, 0.015f, 0.01f);
         houseDoorModelF = glm::scale(houseDoorModelF, hdoorScale);
         houseDoorModelF = glm::rotate(houseDoorModelF, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        houseDoorModelF = glm::rotate(houseDoorModelF, -glm::radians(doorRotationAngleHouse), glm::vec3(0.0f, 0.0f, 1.0f));
 
         lightingShader.setMat4("model", houseDoorModelF);
 
