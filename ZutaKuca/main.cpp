@@ -125,6 +125,8 @@ int main()
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
     Model man("models/Man/man.obj");
+    //uploads_files_3915069_male
+    Model male("models/Male/ManCasual3.obj");
     Model sun("models/Sun/sun.obj");
     Model fence("models/Ograda/fence.obj");
     Model door("models/Door/door.obj");
@@ -778,28 +780,17 @@ int main()
 
         glUseProgram(0);
 
-        
+       
+        lightingShader.use();
 
-
-       /* lightShader.use();
-   
-            glBindVertexArray(cubeVao);
-            glm::mat4 lightModel = glm::mat4(1.0f);
-            lightModel = glm::translate(lightModel, glm::vec3(1.0, 4.2, -5.0));
-            lightModel = glm::scale(lightModel, glm::vec3(0.3f, 0.3f, 0.3f));
-            lightModel = glm::rotate(lightModel, glm::radians(45.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-            lightShader.setMat4("model", lightModel);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-            lightModel = glm::translate(lightModel, glm::vec3(1.0, 7.5, -5.0));
-            lightShader.setMat4("model", lightModel);
-
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-            glUseProgram(0);
-        
-        */
-
+        glm::vec3 manPosition = glm::vec3(3.0f, 0.1f, -5.6f);
+        glm::mat4 manModel = glm::mat4(1.0f);
+        manModel = glm::translate(manModel, manPosition);
+        glm::vec3 manScale = glm::vec3(1.0f);
+        manModel = glm::scale(manModel, manScale);
+        lightingShader.setMat4("model", manModel);
+        male.Draw(lightingShader);
+        glUseProgram(0);
 
         glm::mat4 windowModel = glm::mat4(1.0f);
         windowModel = glm::translate(windowModel, glm::vec3(2.0f, 0.0f, -5.0f));
@@ -808,16 +799,20 @@ int main()
         lightingShader.use();
         glDisable(GL_CULL_FACE);
 
-        glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+
         if (isTransparent) {
-            lightingShader.setBool("enableTransparency", true);
+            lightingShader.setBool("isWindowTransparent", true);
+
         }
         else {
-            lightingShader.setBool("enableTransparency", false);
+            lightingShader.setBool("isWindowTransparent", false);
+
 
         }
         lightingShader.setMat4("model", windowModel);
+        lightingShader.setBool("isWindowDraw", true);
         glBindVertexArray(windowLeftBottomVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -829,25 +824,16 @@ int main()
 
         glBindVertexArray(windowRightTopVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        lightingShader.setBool("isWindowDraw", false);
+
         glUseProgram(0);
         glDisable(GL_BLEND);
         glEnable(GL_CULL_FACE);
 
-        lightingShader.use();
-
-        glm::vec3 manPosition = glm::vec3(3.0f, 0.1f, -4.3f);
-        glm::mat4 manModel = glm::mat4(1.0f);
-        manModel = glm::translate(manModel, manPosition);
-        glm::vec3 manScale = glm::vec3(0.4f);
-        manModel = glm::scale(manModel, manScale);
-        lightingShader.setMat4("model", manModel);
-        man.Draw(lightingShader);
-        glUseProgram(0);
+        
 
         lightingShader.use();
-        lightingShader.setMat4("view", camera.GetViewMatrix());
-        lightingShader.setMat4("projection", projection);
-        lightingShader.setVec3("viewPos", camera.Position);
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, grassTexture);
         glActiveTexture(GL_TEXTURE1);
@@ -1143,15 +1129,13 @@ int main()
         lightingShader.setVec3("pointLights[2].color", glm::vec3(0.0, 0.0, 1.0));
         float pulsation = 4.0f; 
 
-        float intensity = 2.0f + 4.0f * sin(currentTime * pulsation);
+        float intensity = 3.0f + 4.0f * sin(currentTime * pulsation);
 
         // Set the intensity in your shader
-        lightingShader.setVec3("pointLights[2].intensity", glm::vec3(intensity, intensity, intensity));        lightingShader.setBool("isDogDraw", true);
-  
-
+        lightingShader.setVec3("pointLights[2].intensity", glm::vec3(intensity, intensity, intensity));        
+        lightingShader.setBool("isDogDraw", true);
+ 
         lightingShader.setMat4("model", dogModel);
-
-        // Draw the dog model
         dog.Draw(lightingShader);
         lightingShader.setBool("isDogDraw", false);
 

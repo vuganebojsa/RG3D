@@ -61,6 +61,8 @@ uniform bool displaySmoke=false;
 uniform bool light1Status=true;
 uniform bool light2Status=true;
 uniform bool isDogDraw=false;
+uniform bool isWindowDraw=false;
+uniform bool isWindowTransparent=false;
 uniform vec4 uSunColor;
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -73,6 +75,12 @@ void main()
         FragColor = uSunColor;
     }else if(displaySmoke){
         FragColor = vec4(0.8, 0.8, 0.8, 0.4);
+    }else if(isWindowDraw){
+        if(isWindowTransparent){
+                FragColor = vec4(0.0, 0.0, 1.0, 0.4);
+        }else{
+         FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+        }
     }
     else{
      // properties
