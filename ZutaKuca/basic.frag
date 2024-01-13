@@ -54,6 +54,8 @@ uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLight;
 uniform Material material;
 uniform bool displayWhite;
+uniform bool light1Status=true;
+uniform bool light2Status=true;
 uniform vec4 uSunColor;
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -78,8 +80,11 @@ void main()
     // phase 1: directional lighting
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     // phase 2: point lights
-   for(int i = 0; i < 2; i++)
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
+   for(int i = 0; i < 2; i++){
+        if((i==0 && light1Status == true) || (i == 1 && light2Status==true)){
+            result += CalcPointLight(pointLights[i], norm, FragPos, viewDir); 
+        }
+    }
     // phase 3: spot light
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     

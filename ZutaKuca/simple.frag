@@ -1,10 +1,7 @@
 #version 330 core
+out vec4 FragColor;
 
-in vec4 channelCol;
-out vec4 fragColor;  // Promenjeno ime iz outCol u fragColor
-
-
-void main() {
-
-    fragColor = channelCol;
+void main()
+{
+    FragColor = vec4(1.0); // set all 4 vector values to 1.0
 }

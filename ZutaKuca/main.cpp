@@ -130,14 +130,12 @@ int main()
     Model door("models/Door/door.obj");
 
     Shader lightingShader("basic.vert", "basic.frag");
-    Shader lightCubeShader("light.vert", "light.frag");
+    Shader lightCubeShader("simple.vert", "simple.frag");
 
 
     glm::vec3 pointLightPositions[] = {
-       glm::vec3(0.7f,  0.2f,  2.0f),
-       glm::vec3(2.3f, -3.3f, -4.0f),
-       glm::vec3(-4.0f,  2.0f, -12.0f),
-       glm::vec3(0.0f,  0.0f, -3.0f)
+       glm::vec3(1.0f,  3.8f,  -5.5f),
+       glm::vec3(1.0f, 7.8f, -5.5f)
     };
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
 
@@ -157,15 +155,15 @@ int main()
 
     lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
     lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+    lightingShader.setVec3("pointLights[0].diffuse", 0.2f, 0.2f, 0.2f);
+    lightingShader.setVec3("pointLights[0].specular", 0.2f, 0.2f, 0.2f);
     lightingShader.setFloat("pointLights[0].constant", 1.0f);
     lightingShader.setFloat("pointLights[0].linear", 0.09f);
     lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
     lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
     lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+    lightingShader.setVec3("pointLights[1].diffuse", 0.2f, 0.2f, 0.2f);
+    lightingShader.setVec3("pointLights[1].specular", 0.2f, 0.2f,  0.2f);
     lightingShader.setFloat("pointLights[1].constant", 1.0f);
     lightingShader.setFloat("pointLights[1].linear", 0.09f);
     lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
@@ -618,11 +616,33 @@ int main()
     bool isTransparent = false;
 
 
-
+    bool light1Status = true;
+    bool light2Status = true;
+    double lastPressTime1 = 0.0;
+    double lastPressTime2 = 0.0;
+    double debounceDelay = 0.5; // Adjust this value to your liking
     while (!glfwWindowShouldClose(window))
     {
 #pragma region Keys
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+        {
+            // Check if enough time has passed since the last key press
+            if (glfwGetTime() - lastPressTime1 > debounceDelay)
+            {
+                light1Status = !light1Status;
+                lastPressTime1 = glfwGetTime(); // Update the last press time
+            }
+        }
 
+        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+        {
+            // Check if enough time has passed since the last key press
+            if (glfwGetTime() - lastPressTime2 > debounceDelay)
+            {
+                light2Status = !light2Status;
+                lastPressTime2 = glfwGetTime(); // Update the last press time
+            }
+        }
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -652,6 +672,9 @@ int main()
                doorRotationAngle -= 20.0f * 0.03;
              
         }
+        lightingShader.use();
+        lightingShader.setBool("light1Status", light1Status);
+        lightingShader.setBool("light2Status", light2Status);
 #pragma endregion
 
         if (doorRotationAngle > 60) {
@@ -674,6 +697,7 @@ int main()
 
         
         lightCubeShader.use();
+
 
         lightCubeShader.setMat4("view", camera.GetViewMatrix());
         lightCubeShader.setMat4("projection", projection);
@@ -731,7 +755,9 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glUseProgram(0);
         glDisable(GL_BLEND);
+
         lightingShader.use();
+        lightingShader.setVec3("viewPos", camera.Position);
 
         glm::vec3 manPosition = glm::vec3(3.0f, 0.1f, -4.3f);
         glm::mat4 manModel = glm::mat4(1.0f);
@@ -1007,11 +1033,9 @@ int main()
 
         // we now draw as many light bulbs as we have point lights.
         lightCubeShader.use();
-        lightCubeShader.setMat4("projection", projection);
 
-        lightCubeShader.setMat4("view", view);
         glBindVertexArray(lightCubeVAO);
-        for (unsigned int i = 0; i < 4; i++)
+        for (unsigned int i = 0; i < 2; i++)
         {
             glm::mat4 cubeModel = glm::mat4(1.0f);
             cubeModel = glm::translate(cubeModel, pointLightPositions[i]);
