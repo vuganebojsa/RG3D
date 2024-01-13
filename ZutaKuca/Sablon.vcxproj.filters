@@ -49,6 +49,11 @@
     <None Include="chimney.frag" />
     <None Include="door.frag" />
     <None Include="smoke.frag" />
+    <None Include="window.frag" />
+    <None Include="model.vert" />
+    <None Include="model.frag" />
+    <None Include="light..frag" />
+    <None Include="light.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.hpp">

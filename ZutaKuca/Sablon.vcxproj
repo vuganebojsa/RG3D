@@ -154,6 +154,10 @@
     <None Include="door.frag" />
     <None Include="ground.frag" />
     <None Include="house.frag" />
+    <None Include="light..frag" />
+    <None Include="light.vert" />
+    <None Include="model.frag" />
+    <None Include="model.vert" />
     <None Include="name.frag" />
     <None Include="name.vert" />
     <None Include="packages.config" />

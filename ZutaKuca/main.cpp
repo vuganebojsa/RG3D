@@ -118,6 +118,8 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nameInd);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nameIndices), nameIndices, GL_STATIC_DRAW);
 
+
+
 #pragma endregion
 
     Model tree("models/Tree/Tree.obj");
@@ -127,56 +129,54 @@ int main()
     Model fence("models/Ograda/fence.obj");
     Model door("models/Door/door.obj");
 
-    Shader unifiedShader("basic.vert", "basic.frag");
-    Shader sunShader("basic.vert", "cube.frag");
-    Shader houseShader("basic.vert", "house.frag");
-    Shader simpleShader("simple.vert", "simple.frag");
-    Shader groundShader("basic.vert", "ground.frag");
-    Shader chimneyShader("basic.vert", "chimney.frag");
-    Shader doorShader("basic.vert", "door.frag");
-    Shader smokeShader("basic.vert", "smoke.frag");
-    Shader windowShader("basic.vert", "window.frag");
+    Shader lightingShader("basic.vert", "basic.frag");
+    Shader lightCubeShader("light.vert", "light.frag");
 
 
-
-    sunShader.use();
-
+    glm::vec3 pointLightPositions[] = {
+       glm::vec3(0.7f,  0.2f,  2.0f),
+       glm::vec3(2.3f, -3.3f, -4.0f),
+       glm::vec3(-4.0f,  2.0f, -12.0f),
+       glm::vec3(0.0f,  0.0f, -3.0f)
+    };
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)wWidth / (float)wHeight, 0.1f, 100.0f);
-    sunShader.setMat4("uP", projection);
 
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    sunShader.setMat4("uV", camera.GetViewMatrix());
 
-    windowShader.use();
-    windowShader.setMat4("uP", projection);
-    windowShader.setMat4("uV", camera.GetViewMatrix());
-    smokeShader.use();
-    smokeShader.setMat4("uP", projection);
-    smokeShader.setMat4("uV", camera.GetViewMatrix());
-    doorShader.use();
-    doorShader.setMat4("uP", projection);
-    doorShader.setMat4("uV", camera.GetViewMatrix());
-    chimneyShader.use();
-    chimneyShader.setMat4("uP", projection);
-    chimneyShader.setMat4("uV", camera.GetViewMatrix());
+   
 
-    unifiedShader.use();
-    unifiedShader.setMat4("uV", camera.GetViewMatrix());
+    lightingShader.use();
+    lightingShader.setInt("material.diffuse", 0);
+    lightingShader.setInt("material.specular", 1);
+    lightingShader.setFloat("material.shininess", 32.0f);
 
-    unifiedShader.setVec3("uLightPos", 0, 1, 3);
-    unifiedShader.setVec3("uViewPos",camera.Position);
-    unifiedShader.setVec3("uLightColor", 1, 1, 1);
-    unifiedShader.setMat4("uP", projection);
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-3.5f, 0.0f, 0.0f));
+    lightingShader.setVec3("dirLight.direction", 0.0f, -1.0f, 0.0f);
+    lightingShader.setVec3("dirLight.ambient", 0.6f, 0.6f, 0.6f);
+    lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+    lightingShader.setVec3("dirLight.specular", 0.8f, 0.8f, 0.8f);
 
-    houseShader.use();
-    houseShader.setMat4("uV", camera.GetViewMatrix());
-    houseShader.setMat4("uP", projection);
+    lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
+    lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+    lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+    lightingShader.setFloat("pointLights[0].constant", 1.0f);
+    lightingShader.setFloat("pointLights[0].linear", 0.09f);
+    lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
+    lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
+    lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+    lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+    lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+    lightingShader.setFloat("pointLights[1].constant", 1.0f);
+    lightingShader.setFloat("pointLights[1].linear", 0.09f);
+    lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
 
-    groundShader.use();
-    groundShader.setMat4("uV", camera.GetViewMatrix());
-    groundShader.setMat4("uP", projection);
+    unsigned wall = loadImageToTexture("res/wall.jpg");
+    glBindTexture(GL_TEXTURE_2D, wall);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     unsigned name = loadImageToTexture("res/imebelo.png");
     glBindTexture(GL_TEXTURE_2D, name);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -185,15 +185,68 @@ int main()
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-    unsigned grassTexture = loadImageToTexture("res/trava.png");
+    unsigned grassTexture = loadImageToTexture("res/trava.jpg");
+    unsigned grassSpecularTexture = loadImageToTexture("res/grassspecular.png");
     glBindTexture(GL_TEXTURE_2D, grassTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
 #pragma region Vertices
 
+    float vertices[] = {
+        // positions          // normals           // texture coords
+        //X      Y       Z     NX     NY     NZ  
+        // front   
+        -0.5f, -0.5f, 0.5f,  0.0f,  0.0f, 1.0f,  0.0f,  1.0f,
+         0.5f, -0.5f, 0.5f,  0.0f,  0.0f, 1.0f,  1.0f,  1.0f,
+       -0.5f,  0.5f, 0.5f,  0.0f,  0.0f, 1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, 0.5f,  0.0f,  0.0f, 1.0f,  1.0f,  1.0f,
+         0.5f,  0.5f, 0.5f,  0.0f,  0.0f, 1.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, 0.5f,  0.0f,  0.0f, 1.0f,  0.0f,  0.0f,
 
+        //bottom
+        -0.5f, -0.5f, -0.5f,  0.0f,  -1.0f,  0.0f,  1.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  -1.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  -1.0f,  0.0f,  1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  -1.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  -1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  -1.0f,  0.0f,  1.0f,  0.0f,
+
+        //left
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,   0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f,  -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,   0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f,   0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+
+        //right
+         0.5f,  -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+         0.5f,  -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+         0.5f,   0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+         0.5f,  -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+         0.5f,   0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+         0.5f,   0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+
+         //top
+        -0.5f, 0.5f, 0.5f,  0.0f, 1.0f,  0.0f,  0.0f,  0.0f,
+         0.5f, 0.5f, 0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f, 0.5f,-0.5f,  0.0f, 1.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, 0.5f, 0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
+         0.5f, 0.5f,-0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  1.0f,
+        -0.5f, 0.5f,-0.5f,  0.0f, 1.0f,  0.0f,  0.0f,  1.0f,
+
+        //back
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  1.0f,  1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  0.0f,  0.0f
+    };
 
     float groundVertices[] = {
          -25.0, -0.1,  20.0, 0.0, 1.0, 0.0,
@@ -362,7 +415,31 @@ int main()
 
 
     unsigned int stride = 6 * sizeof(float); //Korak pri kretanju po podacima o tjemenima = Koliko mjesta u memoriji izmedju istih komponenti susjednih tjemena
-    
+    unsigned int VBO, cubeVao;
+    glGenVertexArrays(1, &cubeVao);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(cubeVao);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
+    unsigned int lightCubeVAO;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     unsigned int windowLeftBottomVao, windowLeftBottomVbo;
     glGenVertexArrays(1, &windowLeftBottomVao);
     glBindVertexArray(windowLeftBottomVao);
@@ -539,6 +616,9 @@ int main()
     float randomZ = 0;
     std::vector<float> smokeTranslates = { -1.0f, 0.0f, 1.0f };
     bool isTransparent = false;
+
+
+
     while (!glfwWindowShouldClose(window))
     {
 #pragma region Keys
@@ -585,48 +665,59 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        windowShader.use();
-        windowShader.setMat4("uV", camera.GetViewMatrix());
+        lightingShader.use();
+        lightingShader.setMat4("view", camera.GetViewMatrix());
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setVec3("viewPos", camera.Position);
+
         glUseProgram(0);
 
-        smokeShader.use();
-        smokeShader.setMat4("uV", camera.GetViewMatrix());
+        
+        lightCubeShader.use();
+
+        lightCubeShader.setMat4("view", camera.GetViewMatrix());
+        lightCubeShader.setMat4("projection", projection);
+
         glUseProgram(0);
 
-        chimneyShader.use();
-        chimneyShader.setMat4("uV", camera.GetViewMatrix());
-        chimneyShader.setVec4("chColooor", glm::vec4(0.6, 0.4, 0.2, 1.0));
-        glUseProgram(0);
-        houseShader.use();
-        houseShader.setMat4("uV", camera.GetViewMatrix());
-        glUseProgram(0);
-        groundShader.use();
-        groundShader.setMat4("uV", camera.GetViewMatrix());
-        glUseProgram(0);
-        unifiedShader.use();
-        unifiedShader.setMat4("uV", camera.GetViewMatrix());
-        glUseProgram(0);
+        
 
-        doorShader.use();
-        doorShader.setMat4("uV", camera.GetViewMatrix());
-        glUseProgram(0);
+
+       /* lightShader.use();
+   
+            glBindVertexArray(cubeVao);
+            glm::mat4 lightModel = glm::mat4(1.0f);
+            lightModel = glm::translate(lightModel, glm::vec3(1.0, 4.2, -5.0));
+            lightModel = glm::scale(lightModel, glm::vec3(0.3f, 0.3f, 0.3f));
+            lightModel = glm::rotate(lightModel, glm::radians(45.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+            lightShader.setMat4("model", lightModel);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            lightModel = glm::translate(lightModel, glm::vec3(1.0, 7.5, -5.0));
+            lightShader.setMat4("model", lightModel);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            glUseProgram(0);
+        
+        */
 
 
         glm::mat4 windowModel = glm::mat4(1.0f);
         windowModel = glm::translate(windowModel, glm::vec3(2.0f, 0.0f, -5.0f));
 
 
-        windowShader.use();
+        lightingShader.use();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if (isTransparent) {
-            windowShader.setBool("enableTransparency", true);
+            lightingShader.setBool("enableTransparency", true);
         }
         else {
-            windowShader.setBool("enableTransparency", false);
+            lightingShader.setBool("enableTransparency", false);
 
         }
-        windowShader.setMat4("uM", windowModel);
+        lightingShader.setMat4("model", windowModel);
         glBindVertexArray(windowLeftBottomVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -640,26 +731,78 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glUseProgram(0);
         glDisable(GL_BLEND);
+        lightingShader.use();
+
+        glm::vec3 manPosition = glm::vec3(3.0f, 0.1f, -4.3f);
+        glm::mat4 manModel = glm::mat4(1.0f);
+        manModel = glm::translate(manModel, manPosition);
+        glm::vec3 manScale = glm::vec3(0.4f);
+        manModel = glm::scale(manModel, manScale);
+        lightingShader.setMat4("model", manModel);
+        man.Draw(lightingShader);
+        glUseProgram(0);
 
 
+      /*  lightingShader.use();
+        lightingShader.setVec3("viewPos", camera.Position);
+        glBindVertexArray(cubeVao);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, wall);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.2f, 4.0f, 4.0f));
+        lightingShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
-        groundShader.use();
+        glUseProgram(0);
+        glBindVertexArray(0);*/
+
+        lightingShader.use();
+        lightingShader.setMat4("view", camera.GetViewMatrix());
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setVec3("viewPos", camera.Position);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, grassTexture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, grassSpecularTexture);
         glm::mat4 groundModel = glm::mat4(1.0f);
-        groundModel = glm::translate(groundModel, glm::vec3(2.0f, 0.0f, -5.0f));
-        groundShader.setMat4("uM", groundModel);
-        glBindVertexArray(groundVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        groundModel = glm::translate(groundModel, glm::vec3(2.0f, -0.5f, -5.0f));
+        groundModel = glm::scale(groundModel, glm::vec3(25.0, 1.0, 25.0));
+        lightingShader.setMat4("model", groundModel);
+        glBindVertexArray(cubeVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         glUseProgram(0);
 
         glm::mat4 houseModel = glm::mat4(1.0f);
         houseModel = glm::translate(houseModel, glm::vec3(2.0f, 0.0f, -5.0f));
        
         glDisable(GL_CULL_FACE);
-        houseShader.use();
+       /* lightingShader.use();
+        lightingShader.setVec3("viewPos", camera.Position);
+        glBindVertexArray(cubeVao);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, wall);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.2f, 4.0f, 4.0f));
+        lightingShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
-        houseShader.setMat4("uM", houseModel);
+        glUseProgram(0);
+        glBindVertexArray(0);*/
+        lightingShader.use();
+        lightingShader.setVec3("viewPos", camera.Position);
+
+        lightingShader.setMat4("model", houseModel);
         glBindVertexArray(houseVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, wall);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
         glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 8, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
@@ -672,8 +815,11 @@ int main()
         glDrawArrays(GL_TRIANGLE_STRIP, 40, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 44, 4);
 
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         glUseProgram(0);
-        
+        glBindVertexArray(0);
+
         float smokeTime = glfwGetTime();
         float timeSinceLastMove = std::fmod(smokeTime, 1.0f);
 
@@ -700,8 +846,8 @@ int main()
             // Adjust translation on x, y, and z axes for each plume
             smokeModel = glm::translate(smokeModel, glm::vec3(2.0f + randomX, smokeTranslates[i], -5.0f + randomZ));
 
-            smokeShader.use();
-            smokeShader.setMat4("uM", smokeModel);
+            lightingShader.use();
+            lightingShader.setMat4("model", smokeModel);
 
             glBindVertexArray(smokeVao);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
@@ -716,17 +862,17 @@ int main()
 
         glm::mat4 doorModel = glm::mat4(1.0f);
         doorModel = glm::translate(doorModel, glm::vec3(2.0f, 0.0f, -5.0f));
-        doorShader.use();
-        doorShader.setMat4("uM", doorModel);
+        lightingShader.use();
+        lightingShader.setMat4("model", doorModel);
         glBindVertexArray(doorVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glUseProgram(0);
 
         glm::mat4 chimneyModel = glm::mat4(1.0f);
         chimneyModel = glm::translate(chimneyModel, glm::vec3(2.0f, 0.0f, -5.0f));
-        chimneyShader.use();
+        lightingShader.use();
 
-        chimneyShader.setMat4("uM", chimneyModel);
+        lightingShader.setMat4("model", chimneyModel);
         glBindVertexArray(chimneyVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 16);
 
@@ -744,25 +890,27 @@ int main()
         sunModel = glm::translate(sunModel, sunPosition);
         sunModel = glm::rotate(sunModel, glm::radians(sunRotation), glm::vec3(0.0f, 1.0f, 0.0f));
         sunModel = glm::scale(sunModel, glm::vec3(sunScale));
-        unifiedShader.use();
-        unifiedShader.setBool("displayWhite", true);
+        lightingShader.use();
+        lightingShader.setBool("displayWhite", true);
         sunColor = 1.0f - 0.7f * sin(glfwGetTime());
 
-        unifiedShader.setVec4("uSunColor", glm::vec4(1.0f, sunColor, 0.0f, 1.0f));
-        unifiedShader.setVec3("uViewPos", camera.Position);
+        lightingShader.setVec4("uSunColor", glm::vec4(1.0f, sunColor, 0.0f, 1.0f));
+        lightingShader.setVec3("uViewPos", camera.Position);
 
-        unifiedShader.setMat4("uM", sunModel);
-        sun.Draw(unifiedShader);
-        unifiedShader.setBool("displayWhite", false);
+        lightingShader.setMat4("model", sunModel);
+        sun.Draw(lightingShader);
+        lightingShader.setBool("displayWhite", false);
         glUseProgram(0);
 
 
-        unifiedShader.use();
-        unifiedShader.setMat4("uM", model);
+        lightingShader.use();
+        glm::mat4 model = glm::mat4(1.0f);
 
-        tree.Draw(unifiedShader);
+        lightingShader.setMat4("model", model);
+
+        tree.Draw(lightingShader);
         glUseProgram(0);
-        unifiedShader.use();
+        lightingShader.use();
 
         glm::vec3 doorPosition = glm::vec3(2.8f, 0.88f, 5.74f);
         glm::mat4 doorModelF = glm::mat4(1.0f);
@@ -772,12 +920,12 @@ int main()
         doorModelF = glm::scale(doorModelF, doorScale);
         doorModelF = glm::rotate(doorModelF, -glm::radians(doorRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
-        unifiedShader.setMat4("uM", doorModelF);
+        lightingShader.setMat4("model", doorModelF);
 
-        door.Draw(unifiedShader);
+        door.Draw(lightingShader);
         glUseProgram(0);
 
-        unifiedShader.use();
+        lightingShader.use();
 
         glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 6.0f);
         glm::mat4 fenceModel = glm::mat4(1.0f);
@@ -791,12 +939,12 @@ int main()
         glm::vec3 fenceScale = glm::vec3(15.0f, 1.0f, 1.0f);
         fenceModel = glm::scale(fenceModel, fenceScale);
 
-        unifiedShader.setMat4("uM", fenceModel);
+        lightingShader.setMat4("model", fenceModel);
 
-        fence.Draw(unifiedShader);
+        fence.Draw(lightingShader);
         glUseProgram(0);
 
-        unifiedShader.use();
+        lightingShader.use();
 
          fencePosition = glm::vec3(4.0f, 0.0f, 6.0f);
         fenceModel = glm::mat4(1.0f);
@@ -810,23 +958,13 @@ int main()
         fenceScale = glm::vec3(12.8f, 1.0f, 1.0f);
         fenceModel = glm::scale(fenceModel, fenceScale);
 
-        unifiedShader.setMat4("uM", fenceModel);
+        lightingShader.setMat4("model", fenceModel);
 
-        fence.Draw(unifiedShader);
+        fence.Draw(lightingShader);
         glUseProgram(0);
 
-        unifiedShader.use();
 
-        glm::vec3 manPosition = glm::vec3(3.0f, 0.1f, -4.3f);
-        glm::mat4 manModel = glm::mat4(1.0f);
-        manModel = glm::translate(manModel, manPosition);
-        glm::vec3 manScale = glm::vec3(0.4f);
-        manModel = glm::scale(manModel, manScale);
-        unifiedShader.setMat4("uM", manModel);
-        man.Draw(unifiedShader);
-        glUseProgram(0);
-
-        unifiedShader.use();
+        lightingShader.use();
        
         currentTime = glfwGetTime();
         float orbitAngle = currentTime * orbitSpeed;
@@ -845,10 +983,10 @@ int main()
         dogModel = glm::rotate(dogModel, glm::radians(-124.0f), glm::vec3(1.0f, 1.0f, 1.0f));  // Additional rotation
         dogModel = glm::scale(dogModel, dogScale);
         // Set the model matrix in the shader
-        unifiedShader.setMat4("uM", dogModel);
+        lightingShader.setMat4("model", dogModel);
 
         // Draw the dog model
-        dog.Draw(unifiedShader);
+        dog.Draw(lightingShader);
         glUseProgram(0);
 
 
@@ -865,6 +1003,38 @@ int main()
 
         glUseProgram(0);
         glBindVertexArray(0);
+
+
+        // we now draw as many light bulbs as we have point lights.
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection", projection);
+
+        lightCubeShader.setMat4("view", view);
+        glBindVertexArray(lightCubeVAO);
+        for (unsigned int i = 0; i < 4; i++)
+        {
+            glm::mat4 cubeModel = glm::mat4(1.0f);
+            cubeModel = glm::translate(cubeModel, pointLightPositions[i]);
+            cubeModel = glm::scale(cubeModel, glm::vec3(0.2f)); // Make it a smaller cube
+            lightCubeShader.setMat4("model", cubeModel);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
+        /*lightingShader.use();
+        lightingShader.setVec3("viewPos", camera.Position);
+        glBindVertexArray(cubeVao);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, wall);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.2f, 4.0f, 4.0f));
+        lightingShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glUseProgram(0);
+        glBindVertexArray(0);*/
+
 
 
         glfwSwapBuffers(window);
