@@ -156,7 +156,7 @@ int main()
     lightingShader.setVec3("dirLight.color", 1.0f, 1.0f, 1.0f);
 
     lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-    lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    lightingShader.setVec3("pointLights[0].ambient", 0.15f, 0.15f, 0.15f);
     lightingShader.setVec3("pointLights[0].diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setVec3("pointLights[0].specular", 0.2f, 0.2f, 0.2f);
     lightingShader.setFloat("pointLights[0].constant", 1.0f);
@@ -166,7 +166,7 @@ int main()
     lightingShader.setVec3("pointLights[0].intensity", glm::vec3(1.0, 1.0, 1.0));
 
     lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-    lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+    lightingShader.setVec3("pointLights[1].ambient", 0.15f, 0.15f, 0.15f);
     lightingShader.setVec3("pointLights[1].diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setVec3("pointLights[1].specular", 0.2f, 0.2f,  0.2f);
     lightingShader.setFloat("pointLights[1].constant", 1.0f);
@@ -176,9 +176,9 @@ int main()
     lightingShader.setVec3("pointLights[1].intensity", glm::vec3(1.0, 1.0, 1.0));
 
     lightingShader.setVec3("pointLights[2].position", pointLightPositions[1]);
-    lightingShader.setVec3("pointLights[2].ambient", 0.2f, 0.2f, 0.2f);
-    lightingShader.setVec3("pointLights[2].diffuse", 1.1f, 1.1f, 1.1f);
-    lightingShader.setVec3("pointLights[2].specular", 1.1f, 1.1f, 1.1f);
+    lightingShader.setVec3("pointLights[2].ambient", 0.1f, 0.1f, 0.1f);
+    lightingShader.setVec3("pointLights[2].diffuse", 0.5f, 0.5f, 0.5f);
+    lightingShader.setVec3("pointLights[2].specular", 0.5f,0.5f, 0.5f);
     lightingShader.setFloat("pointLights[2].constant", 1.0f);
     lightingShader.setFloat("pointLights[2].linear", 0.09f);
     lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
@@ -676,8 +676,8 @@ int main()
         if (doorRotationAngle > 60) {
             doorRotationAngle = 60;
         }
-        if (doorRotationAngle < 0) {
-            doorRotationAngle = 0;
+        if (doorRotationAngle < 8) {
+            doorRotationAngle = 8;
         }
         if (doorRotationAngleHouse > 60) {
             doorRotationAngleHouse = 60;

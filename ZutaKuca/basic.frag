@@ -68,7 +68,7 @@ uniform vec4 uSunColor;
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-
+bool isPointInsideBox(vec3 point, vec3 minBounds, vec3 maxBounds);
 void main()
 {    
     if(displayWhite){
@@ -104,20 +104,39 @@ void main()
         else if(i==1 && light2Status == false){
                     continue;
         }
-       
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir); 
+        if(light1Status == true){
+            if(i==0 && FragPos.y > pointLights[0].position.y && distance(FragPos.y, pointLights[0].position.y) > 0.5f){
+                continue;
+            }
+        }
+        if(light2Status == true){
+            if(i==1 && FragPos.y > pointLights[1].position.y && distance(FragPos.y, pointLights[1].position.y) > 0.5f){
+                continue;
+            }else if(i == 1 && FragPos.y < pointLights[1].position.y && distance(FragPos.y, pointLights[1].position.y) > 3.5f){
+            continue;
+            }
+        }
+        vec3 houseMinBounds = vec3(-3.9f, 0.0f, -8.4f); // Replace minX, minY, minZ with actual minimum bounds
+        vec3 houseMaxBounds = vec3(8.0f, 15.0f, 2.0f); // Replace maxX, maxY, maxZ with actual maximum bounds
+        bool isInsideHouse = isPointInsideBox(FragPos, houseMinBounds, houseMaxBounds);
+        if(isInsideHouse == true && i == 2){
+            continue;
+        }
 
-        
-        
+        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir); 
         
     }
-    // phase 3: spot light
-    result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
-    FragColor = vec4(result, 1.0);
+ 
+        result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
+
+        
+        FragColor = vec4(result, 1.0);
     }
    
 }
-
+bool isPointInsideBox(vec3 point, vec3 minBounds, vec3 maxBounds) {
+    return all(greaterThanEqual(point, minBounds)) && all(lessThanEqual(point, maxBounds));
+}
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
