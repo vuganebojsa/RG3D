@@ -110,7 +110,7 @@ void main()
         if(light2Status == true){
             if(i==1 && FragPos.y > pointLights[1].position.y && distance(FragPos.y, pointLights[1].position.y) > 0.5f){
                 continue;
-            }else if(i == 1 && FragPos.y < pointLights[1].position.y && distance(FragPos.y, pointLights[1].position.y) > 3.5f){
+            }else if(i == 1 && FragPos.y < pointLights[1].position.y && distance(FragPos.y, pointLights[1].position.y) > 3.4f){
             continue;
             }
         }

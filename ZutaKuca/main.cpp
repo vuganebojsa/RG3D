@@ -185,7 +185,7 @@ int main()
     lightingShader.setVec3("pointLights[2].color", glm::vec3(1.0, 1.0, 1.0));
     lightingShader.setVec3("pointLights[2].intensity", glm::vec3(1.0, 1.0, 1.0));
 
-    lightingShader.setVec3("spotLight.position", glm::vec3(2.0f, 4.2f, -2.3f));
+    lightingShader.setVec3("spotLight.position", glm::vec3(2.0f, 4.32f, -2.3f));
     lightingShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0));
     lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
     lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(40.0f)));
