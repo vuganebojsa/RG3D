@@ -126,8 +126,10 @@ void main()
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir); 
         
     }
- 
-        result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
+        if(FragPos.y < spotLight.position.y - 1.07f){
+            result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
+
+        }
 
         
         FragColor = vec4(result, 1.0);
