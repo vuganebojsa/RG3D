@@ -611,27 +611,25 @@ int main()
     bool light2Status = true;
     double lastPressTime1 = 0.0;
     double lastPressTime2 = 0.0;
-    double debounceDelay = 0.5; // Adjust this value to your liking
+    double debounceDelay = 0.5;
     while (!glfwWindowShouldClose(window))
     {
 #pragma region Keys
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
         {
-            // Check if enough time has passed since the last key press
             if (glfwGetTime() - lastPressTime1 > debounceDelay)
             {
                 light1Status = !light1Status;
-                lastPressTime1 = glfwGetTime(); // Update the last press time
+                lastPressTime1 = glfwGetTime(); 
             }
         }
 
         if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
         {
-            // Check if enough time has passed since the last key press
             if (glfwGetTime() - lastPressTime2 > debounceDelay)
             {
                 light2Status = !light2Status;
-                lastPressTime2 = glfwGetTime(); // Update the last press time
+                lastPressTime2 = glfwGetTime(); 
             }
         }
         camera.MovementSpeed = 8.0f;
