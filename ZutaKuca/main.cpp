@@ -147,7 +147,7 @@ int main()
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
-    lightingShader.setFloat("material.shininess", 62.0f);
+    lightingShader.setFloat("material.shininess", 32.0f);
 
     lightingShader.setVec3("dirLight.direction", 0.0f, -1.0f, 0.0f);
     lightingShader.setVec3("dirLight.ambient", 0.6f, 0.6f, 0.6f);
@@ -231,6 +231,18 @@ int main()
     unsigned tapestry6Texture = loadImageToTexture("res/tapestry6.jpg");
     unsigned tapestry1Texture = loadImageToTexture("res/tapestry1.jpg");
     unsigned tapestry2Texture = loadImageToTexture("res/tapestry2.jpg");
+    unsigned tapestry7Texture = loadImageToTexture("res/tapestry7.jpg");
+    unsigned windowTexture = loadImageToTexture("res/window.jpg");
+    glBindTexture(GL_TEXTURE_2D, windowTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, tapestry7Texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, tapestry4Texture);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -588,7 +600,6 @@ int main()
     float smokeTranslate = 0.0f;
     float sunColor = 1.0f;
     float doorRotationAngle = 0.0f;
-    float doorRotationAngleHouse = 0.0f;
     float doorFlag = 1;
     float randomX = 0;
     float randomZ = 0;
@@ -639,10 +650,10 @@ int main()
             camera.ProcessKeyboard(RIGHT, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
         {
-            isTransparent = false;
+            isTransparent = true;
         }
         if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
-            isTransparent = true;
+            isTransparent = false;
         }
         if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
         {
@@ -656,18 +667,7 @@ int main()
                doorRotationAngle -= 20.0f * 0.03;
              
         }
-        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-        {
-
-            doorRotationAngleHouse += 20.0f * 0.03;
-
-
-        }
-        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-        {
-            doorRotationAngleHouse -= 20.0f * 0.03;
-
-        }
+       
         lightingShader.use();
         lightingShader.setBool("light1Status", light1Status);
         lightingShader.setBool("light2Status", light2Status);
@@ -679,12 +679,7 @@ int main()
         if (doorRotationAngle < 8) {
             doorRotationAngle = 8;
         }
-        if (doorRotationAngleHouse > 60) {
-            doorRotationAngleHouse = 60;
-        }
-        if (doorRotationAngleHouse < 0) {
-            doorRotationAngleHouse = 0;
-        }
+        
         glClearColor(0.529f, 0.804f, 0.922f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -717,8 +712,7 @@ int main()
         male.Draw(lightingShader);
         glUseProgram(0);
 
-        glm::mat4 windowModel = glm::mat4(1.0f);
-        windowModel = glm::translate(windowModel, glm::vec3(2.0f, 0.0f, -5.0f));
+    
 
 
         lightingShader.use();
@@ -737,7 +731,7 @@ int main()
 
         }
 
-        lightingShader.setMat4("model", windowModel);
+       /* lightingShader.setMat4("model", windowModel);
         lightingShader.setBool("isWindowDraw", true);
         glBindVertexArray(windowLeftBottomVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -753,9 +747,51 @@ int main()
         lightingShader.setBool("isWindowDraw", false);
  
 
-        glUseProgram(0);
+        glUseProgram(0);*/
+        lightingShader.use();
+        lightingShader.setBool("isWindowDraw", true);
+
+        glBindVertexArray(cubeVao);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, windowTexture);
+        glm::mat4 windowModel = glm::mat4(1.0f);
+        windowModel = glm::translate(windowModel, glm::vec3(-1.0f, 2.0f, -3.5f));
+        windowModel = glm::rotate(windowModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        windowModel = glm::scale(windowModel, glm::vec3(0.3f, 1.6f, 1.6f));
+        lightingShader.setMat4("model", windowModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        windowModel = glm::mat4(1.0f);
+        windowModel = glm::translate(windowModel, glm::vec3(5.0f, 2.0f, -3.5f));
+        windowModel = glm::rotate(windowModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        windowModel = glm::scale(windowModel, glm::vec3(0.3f, 1.6f, 1.6f));
+        lightingShader.setMat4("model", windowModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        windowModel = glm::mat4(1.0f);
+        windowModel = glm::translate(windowModel, glm::vec3(-1.0f, 6.5f, -3.5f));
+        windowModel = glm::rotate(windowModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        windowModel = glm::scale(windowModel, glm::vec3(0.3f, 1.6f, 1.6f));
+        lightingShader.setMat4("model", windowModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        windowModel = glm::mat4(1.0f);
+        windowModel = glm::translate(windowModel, glm::vec3(5.0f, 6.5f, -3.5f));
+        windowModel = glm::rotate(windowModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        windowModel = glm::scale(windowModel, glm::vec3(0.3f, 1.6f, 1.6f));
+        lightingShader.setMat4("model", windowModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        lightingShader.setBool("isWindowDraw", false);
+
+
         glDisable(GL_BLEND);
         glEnable(GL_CULL_FACE);
+        glUseProgram(0);
 
         
 
@@ -846,6 +882,25 @@ int main()
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+       
+
+
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(3.5f, 2.1f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 4.2f, 12.2f));
+
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(3.5f, 6.5f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 4.2f, 10.2f));
+
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glActiveTexture(GL_TEXTURE0);
@@ -876,7 +931,25 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry7Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(3.56f, 2.15f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.01f, 4.1f, 11.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tapestry7Texture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(3.56f, 6.15f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.01f, 4.1f, 9.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tapestry4Texture);
         houseModel = glm::mat4(1.0f);
@@ -908,7 +981,7 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, reflectorTexture);
         glm::mat4 reflector = glm::mat4(1.0f);
-        reflector = glm::translate(reflector, glm::vec3(2.0f, 3.3f, -2.7f));
+        reflector = glm::translate(reflector, glm::vec3(2.0f, 3.3f, -3.3f));
         reflector = glm::scale(reflector, glm::vec3(2.0f, 0.2f, 0.2f));
         lightingShader.setMat4("model", reflector);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -917,7 +990,7 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, neonTexture);
         reflector = glm::mat4(1.0f);
-        reflector = glm::translate(reflector, glm::vec3(2.0f, 3.15f, -2.7f));
+        reflector = glm::translate(reflector, glm::vec3(2.0f, 3.15f, -3.3f));
         reflector = glm::scale(reflector, glm::vec3(2.0f, 0.1f, 0.2f));
         lightingShader.setMat4("model", reflector);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -926,14 +999,25 @@ int main()
 
         lightingShader.use();
 
-        glm::vec3 houseDoorPosition = glm::vec3(2.0f, 3.2f, -2.9f);
+        glm::vec3 houseDoorPosition = glm::vec3(2.0f, 3.0f, -3.43f);
         glm::mat4 houseDoorModelF = glm::mat4(1.0f);
         houseDoorModelF = glm::translate(houseDoorModelF, houseDoorPosition);
 
-        glm::vec3 hdoorScale = glm::vec3(0.02f, 0.015f, 0.01f);
+        glm::vec3 hdoorScale = glm::vec3(0.02f, 0.015f, 0.02f);
         houseDoorModelF = glm::scale(houseDoorModelF, hdoorScale);
         houseDoorModelF = glm::rotate(houseDoorModelF, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        houseDoorModelF = glm::rotate(houseDoorModelF, -glm::radians(doorRotationAngleHouse), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        lightingShader.setMat4("model", houseDoorModelF);
+
+        houseDoor.Draw(lightingShader);
+
+        houseDoorPosition = glm::vec3(2.0f, 3.0f, -3.56f);
+         houseDoorModelF = glm::mat4(1.0f);
+        houseDoorModelF = glm::translate(houseDoorModelF, houseDoorPosition);
+
+         hdoorScale = glm::vec3(0.02f, 0.015f, 0.03f);
+        houseDoorModelF = glm::scale(houseDoorModelF, hdoorScale);
+        houseDoorModelF = glm::rotate(houseDoorModelF, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
         lightingShader.setMat4("model", houseDoorModelF);
 
@@ -1044,8 +1128,11 @@ int main()
         doorModelF = glm::rotate(doorModelF, -glm::radians(doorRotationAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 
         lightingShader.setMat4("model", doorModelF);
+        lightingShader.setBool("isDoorDraw", true);
 
         door.Draw(lightingShader);
+        lightingShader.setBool("isDoorDraw", false);
+
         glUseProgram(0);
 
         lightingShader.use();
@@ -1149,7 +1236,23 @@ int main()
             lightCubeShader.setMat4("model", cubeModel);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+        glBindVertexArray(0);
+        glBindVertexArray(cubeVao);
+        lightingShader.use();
 
+        glm::mat4 cubeModel = glm::mat4(1.0f);
+        cubeModel = glm::translate(cubeModel, pointLightPositions[0]);
+        cubeModel = glm::translate(cubeModel, glm::vec3(0.0f, 0.3f, 0.0f));
+        cubeModel = glm::scale(cubeModel, glm::vec3(0.1f, 0.35f, 0.1f));
+        lightingShader.setMat4("model", cubeModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+         cubeModel = glm::mat4(1.0f);
+        cubeModel = glm::translate(cubeModel, pointLightPositions[1]);
+        cubeModel = glm::translate(cubeModel, glm::vec3(0.0f, 0.3f, 0.0f));
+        cubeModel = glm::scale(cubeModel, glm::vec3(0.1f, 0.35f, 0.1f));
+        lightingShader.setMat4("model", cubeModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

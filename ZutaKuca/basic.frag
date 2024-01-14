@@ -64,39 +64,37 @@ uniform bool isDogDraw=false;
 uniform bool isWindowDraw=false;
 uniform bool isWindowTransparent=false;
 uniform vec4 uSunColor;
-// function prototypes
+uniform bool isDoorDraw = false;
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 bool isPointInsideBox(vec3 point, vec3 minBounds, vec3 maxBounds);
+
+
 void main()
-{    
+{   
+    vec4 texColora = texture(material.diffuse, TexCoords);
+    if(texColora.a < 0.1 && !isDoorDraw)
+        discard;
     if(displayWhite){
         FragColor = uSunColor;
     }else if(displaySmoke){
         FragColor = vec4(0.8, 0.8, 0.8, 0.4);
-    }else if(isWindowDraw){
-        if(isWindowTransparent){
-                FragColor = vec4(0.0, 0.0, 1.0, 0.4);
-        }else{
-         FragColor = vec4(0.0, 0.0, 1.0, 1.0);
-        }
+    }else if(isWindowDraw && isWindowTransparent){
+        FragColor = vec4(0.8, 0.8, 0.8, 0.4);
+            
     }
     else{
      // properties
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
     
-    // == =====================================================
-    // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
-    // For each phase, a calculate function is defined that calculates the corresponding color
-    // per lamp. In the main() function we take all the calculated colors and sum them up for
-    // this fragment's final color.
-    // == =====================================================
-    // phase 1: directional lighting
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
-    // phase 2: point lights
-   for(int i = 0; i < 3; i++){
+     vec3 houseMinBounds = vec3(-3.9f, 0.0f, -8.4f);
+    vec3 houseMaxBounds = vec3(8.0f, 15.0f, -3.52f); 
+    bool isInsideHouse = isPointInsideBox(FragPos, houseMinBounds, houseMaxBounds);
+    // point lights
+    for(int i = 0; i < 3; i++){
         if(i==0 && light1Status == false){
             continue;
 
@@ -116,17 +114,14 @@ void main()
             continue;
             }
         }
-        vec3 houseMinBounds = vec3(-3.9f, 0.0f, -8.4f); // Replace minX, minY, minZ with actual minimum bounds
-        vec3 houseMaxBounds = vec3(8.0f, 15.0f, 2.0f); // Replace maxX, maxY, maxZ with actual maximum bounds
-        bool isInsideHouse = isPointInsideBox(FragPos, houseMinBounds, houseMaxBounds);
+       
         if(isInsideHouse == true && i == 2){
             continue;
         }
-
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir); 
         
     }
-        if(FragPos.y < spotLight.position.y - 1.07f){
+        if(FragPos.y < spotLight.position.y - 1.07f && !isInsideHouse){
             result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
 
         }
@@ -139,7 +134,6 @@ void main()
 bool isPointInsideBox(vec3 point, vec3 minBounds, vec3 maxBounds) {
     return all(greaterThanEqual(point, minBounds)) && all(lessThanEqual(point, maxBounds));
 }
-// calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
@@ -155,7 +149,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
-// calculates the color when using a point light.
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
@@ -177,7 +170,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
-// calculates the color when using a spot light.
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
