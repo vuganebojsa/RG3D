@@ -189,7 +189,7 @@ int main()
     lightingShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0));
     lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
     lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(40.0f)));
-    lightingShader.setVec3("spotLight.color", glm::vec3(1.0,0.0, 1.0));
+    lightingShader.setVec3("spotLight.color", glm::vec3(0.0,1.0, 1.0));
     lightingShader.setVec3("spotLight.ambient", 1.0f, 1.0f, 1.0f);
     lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
     lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
@@ -1096,7 +1096,7 @@ int main()
         glm::vec3 dogScale = glm::vec3(0.03f);
 
         // Update the model matrix for the dog's position and scale
-        float orientationAngle = -glm::atan(dogZ, dogX);  
+        float orientationAngle = -glm::atan(dogZ, dogX) + 0.5;  
 
         // Update the model matrix for the dog's position, scale, and rotation
         glm::mat4 dogModel = glm::mat4(1.0f);
