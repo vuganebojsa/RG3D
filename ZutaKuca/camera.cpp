@@ -78,8 +78,8 @@ public:
             Position -= Right * velocity;
         if (direction == RIGHT)
             Position += Right * velocity;
-        if (Position.y < 0.2) {
-            Position.y = 0.2;
+        if (Position.y < 0.3) {
+            Position.y = 0.3;
         }
     }
 

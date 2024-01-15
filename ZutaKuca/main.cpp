@@ -131,6 +131,7 @@ int main()
     Model sun("models/Sun/sun.obj");
     Model fence("models/Ograda/fence.obj");
     Model door("models/Door/door.obj");
+    Model car("models/Car/DeLorean.obj");
     Model houseDoor("models/HouseDoor/10057_wooden_door_v3_iterations-2.obj");
 #pragma endregion
 
@@ -219,6 +220,9 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
     unsigned grassTexture = loadImageToTexture("res/trava.jpg");
+    unsigned tileTexture = loadImageToTexture("res/tile.jpg");
+    unsigned metalTexture = loadImageToTexture("res/metal.jpg");
+    unsigned concreteTexture = loadImageToTexture("res/concrete.jpg");
     unsigned roofTexture = loadImageToTexture("res/roof.jpg");
     unsigned floorTexture = loadImageToTexture("res/floor.jpg");
     unsigned neonTexture = loadImageToTexture("res/neon.jpg");
@@ -234,6 +238,27 @@ int main()
     unsigned tapestry2Texture = loadImageToTexture("res/tapestry2.jpg");
     unsigned tapestry7Texture = loadImageToTexture("res/tapestry7.jpg");
     unsigned windowTexture = loadImageToTexture("res/window.jpg");
+    glBindTexture(GL_TEXTURE_2D, tileTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, metalTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, concreteTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, roofTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -579,7 +604,97 @@ int main()
         lightingShader.setMat4("model", femaleModel);
         woman.Draw(lightingShader);
         glUseProgram(0);
-    
+
+        lightingShader.use();
+        glm::vec3 carPos = glm::vec3(19.0f, 0.1f, -5.5f);
+        glm::mat4 carModel = glm::mat4(1.0f);
+        carModel = glm::translate(carModel, carPos);
+        carModel = glm::rotate(carModel, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::vec3 carScale = glm::vec3(0.02f);
+        carModel = glm::scale(carModel, carScale);
+        lightingShader.setMat4("model", carModel);
+        car.Draw(lightingShader);
+        glUseProgram(0);
+
+
+        lightingShader.use();
+
+        glBindVertexArray(cubeVao);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, concreteTexture);
+        glm::mat4 garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(19.0f, 0.0f, -6.0f));
+        garageModel = glm::scale(garageModel, glm::vec3(9.8f, 0.2f, 10.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, metalTexture);
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(14.5f, 2.0f, -10.9f));
+        garageModel = glm::scale(garageModel, glm::vec3(0.1f, 5.0f, 0.1f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(23.6f, 2.0f, -10.9f));
+        garageModel = glm::scale(garageModel, glm::vec3(0.1f, 5.0f, 0.1f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(14.5f, 2.0f, -1.2f));
+        garageModel = glm::scale(garageModel, glm::vec3(0.1f, 5.0f, 0.1f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(23.6f, 2.0f, -1.2f));
+        garageModel = glm::scale(garageModel, glm::vec3(0.1f, 5.0f, 0.1f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, roofTexture);
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(19.0f, 4.5f, -5.9f));
+        garageModel = glm::scale(garageModel, glm::vec3(11.0f, 0.3f, 11.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tileTexture);
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(2.0f, 0.05f, -2.0f));
+        garageModel = glm::scale(garageModel, glm::vec3(1.0f, 0.05f, 1.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(2.1f, 0.05f, -0.5f));
+        garageModel = glm::scale(garageModel, glm::vec3(1.0f, 0.05f, 1.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(1.9f, 0.05f, 1.0f));
+        garageModel = glm::scale(garageModel, glm::vec3(1.0f, 0.05f, 1.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(2.0f, 0.05f, 2.5f));
+        garageModel = glm::scale(garageModel, glm::vec3(1.0f, 0.05f, 1.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glUseProgram(0);
+
+       
         // window setup
         lightingShader.use();
         glDisable(GL_CULL_FACE);
@@ -994,7 +1109,7 @@ int main()
         //lightingShader.setVec3("dirLight.color", glm::vec4(1.0f, sunColor, 0.0f, 1.0f));
 
         glUseProgram(0);
-
+      
 
         lightingShader.use();
         glm::mat4 model = glm::mat4(1.0f);
@@ -1139,6 +1254,8 @@ int main()
     glDeleteProgram(lightCubeShader.ID);
    
     glDeleteTextures(1, &grassTexture);
+    glDeleteTextures(1, &tileTexture);
+    glDeleteTextures(1, &metalTexture);
     glDeleteTextures(1, &wall);
     glDeleteTextures(1, &name);
     glDeleteTextures(1, &neonTexture);
@@ -1156,6 +1273,7 @@ int main()
     glDeleteTextures(1, &tapestry7Texture);
     glDeleteTextures(1, &floorTexture);
     glDeleteTextures(1, &roofTexture);
+    glDeleteTextures(1, &concreteTexture);
 #pragma endregion
 
     glfwTerminate();
