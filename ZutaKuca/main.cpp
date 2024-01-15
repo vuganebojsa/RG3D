@@ -88,10 +88,10 @@ int main()
     Shader nameShader("name.vert", "name.frag");
     float nameVertices[] =
     {
-        -0.98, -0.7, 0.0, 1.0,
-        -0.98, -1.0, 0.0, 0.0,
-        -0.5, -0.7, 1.0, 1.0,
-        -0.5, -1.0, 1.0, 0.0
+        -0.99, -0.7, 0.0, 1.0,
+        -0.99, -1.0, 0.0, 0.0,
+        -0.4, -0.7, 1.0, 1.0,
+        -0.4, -1.0, 1.0, 0.0
     };
 
     unsigned int nameIndices[] =
@@ -121,16 +121,20 @@ int main()
 
 
 #pragma endregion
+#pragma region Models
+
 
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
     Model man("models/Man/man.obj");
-    //uploads_files_3915069_male
     Model male("models/Male/ManCasual3.obj");
     Model sun("models/Sun/sun.obj");
     Model fence("models/Ograda/fence.obj");
     Model door("models/Door/door.obj");
     Model houseDoor("models/HouseDoor/10057_wooden_door_v3_iterations-2.obj");
+#pragma endregion
+
+#pragma region Shaders
 
     Shader lightingShader("basic.vert", "basic.frag");
     Shader lightCubeShader("simple.vert", "simple.frag");
@@ -197,7 +201,9 @@ int main()
     lightingShader.setFloat("spotLight.linear", 0.09f);
     lightingShader.setFloat("spotLight.quadratic", 0.032f);
 
-    
+#pragma endregion
+
+#pragma region Textures
 
     unsigned wall = loadImageToTexture("res/wall.jpg");
     glBindTexture(GL_TEXTURE_2D, wall);
@@ -211,14 +217,12 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
-    unsigned name = loadImageToTexture("res/imebelo.png");
+    unsigned name = loadImageToTexture("res/name.png");
     glBindTexture(GL_TEXTURE_2D, name);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-
     unsigned grassTexture = loadImageToTexture("res/trava.jpg");
     unsigned neonTexture = loadImageToTexture("res/neon.jpg");
     unsigned reflectorTexture = loadImageToTexture("res/chimney.jpg");
@@ -312,6 +316,8 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
+#pragma endregion
+
 #pragma region Vertices
 
     float vertices[] = {
@@ -364,32 +370,6 @@ int main()
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  1.0f,  1.0f,
         -0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  1.0f,  0.0f,
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  0.0f,  0.0f
-    };
-
-
-    float windowVerticesLeftBottom[] = {
-          -2.2, 0.8,  1.01f, 1.0f, 0.0f, 0.0,
-          -0.5, 0.8,   1.01f, 1.0f, 0.0f, 0.0,
-          -2.2,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
-          -0.5,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
-    };
-    float windowVerticesRightBottom[] = {
-          0.5, 0.8,  1.01f, 1.0f, 0.0f, 0.0,
-          2.2, 0.8,   1.01f, 1.0f, 0.0f, 0.0,
-          0.5,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
-          2.2,  3.0,   1.01f, 1.0f, 0.0f,  0.0,
-    };
-    float windowVerticesLeftTop[] = {
-          -2.2, 5.4,  1.01f, 1.0f, 0.0f, 0.0,
-          -0.5, 5.4,   1.01f, 1.0f, 0.0f, 0.0,
-          -2.2,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
-          -0.5,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
-    };
-    float windowVerticesRightTop[] = {
-          0.5, 5.4,  1.01f, 1.0f, 0.0f, 0.0,
-          2.2, 5.4,   1.01f, 1.0f, 0.0f, 0.0,
-          0.5,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
-          2.2,  7.0,   1.01f, 1.0f, 0.0f,  0.0,
     };
 
     float chimneyVertices[] =
@@ -458,10 +438,8 @@ int main()
     unsigned int VBO, cubeVao;
     glGenVertexArrays(1, &cubeVao);
     glGenBuffers(1, &VBO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
     glBindVertexArray(cubeVao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -470,103 +448,24 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     unsigned int lightCubeVAO;
     glGenVertexArrays(1, &lightCubeVAO);
     glBindVertexArray(lightCubeVAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    unsigned int windowLeftBottomVao, windowLeftBottomVbo;
-    glGenVertexArrays(1, &windowLeftBottomVao);
-    glBindVertexArray(windowLeftBottomVao);
-
-    glGenBuffers(1, &windowLeftBottomVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, windowLeftBottomVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesLeftBottom), windowVerticesLeftBottom, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    unsigned int windowLeftTopVao, windowLeftTopVbo;
-    glGenVertexArrays(1, &windowLeftTopVao);
-    glBindVertexArray(windowLeftTopVao);
-
-    glGenBuffers(1, &windowLeftTopVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, windowLeftTopVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesLeftTop), windowVerticesLeftTop, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    unsigned int windowRightTopVao, windowRightTopVbo;
-    glGenVertexArrays(1, &windowRightTopVao);
-    glBindVertexArray(windowRightTopVao);
-
-    glGenBuffers(1, &windowRightTopVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, windowRightTopVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesRightTop), windowVerticesRightTop, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    unsigned int windowRightBottomVao, windowRightBottomVbo;
-    glGenVertexArrays(1, &windowRightBottomVao);
-    glBindVertexArray(windowRightBottomVao);
-
-    glGenBuffers(1, &windowRightBottomVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, windowRightBottomVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(windowVerticesRightBottom), windowVerticesRightBottom, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
     unsigned int smokeVao, smokeVbo;
     glGenVertexArrays(1, &smokeVao);
     glBindVertexArray(smokeVao);
-
     glGenBuffers(1, &smokeVbo);
     glBindBuffer(GL_ARRAY_BUFFER, smokeVbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(smokeVertices), smokeVertices, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
@@ -592,7 +491,7 @@ int main()
     
 #pragma endregion
 
-    // omogucavanje dubine
+    // depth and adequate culling
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -603,7 +502,7 @@ int main()
     float doorFlag = 1;
     float randomX = 0;
     float randomZ = 0;
-    std::vector<float> smokeTranslates = { -1.0f, 0.0f, 1.0f };
+    std::vector<float> smokeTranslates = { -1.0f, 0.0f, 1.2f };
     bool isTransparent = false;
 
 
@@ -682,25 +581,19 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // camera setup
         lightingShader.use();
         lightingShader.setMat4("view", camera.GetViewMatrix());
         lightingShader.setMat4("projection", projection);
         lightingShader.setVec3("viewPos", camera.Position);
-
         glUseProgram(0);
-
-        
         lightCubeShader.use();
-
-
         lightCubeShader.setMat4("view", camera.GetViewMatrix());
         lightCubeShader.setMat4("projection", projection);
-
         glUseProgram(0);
 
-       
+       // man model setup
         lightingShader.use();
-
         glm::vec3 manPosition = glm::vec3(3.0f, 0.1f, -5.6f);
         glm::mat4 manModel = glm::mat4(1.0f);
         manModel = glm::translate(manModel, manPosition);
@@ -711,8 +604,7 @@ int main()
         glUseProgram(0);
 
     
-
-
+        // window setup
         lightingShader.use();
         glDisable(GL_CULL_FACE);
 
@@ -728,25 +620,6 @@ int main()
 
 
         }
-
-       /* lightingShader.setMat4("model", windowModel);
-        lightingShader.setBool("isWindowDraw", true);
-        glBindVertexArray(windowLeftBottomVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glBindVertexArray(windowLeftTopVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glBindVertexArray(windowRightBottomVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glBindVertexArray(windowRightTopVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        lightingShader.setBool("isWindowDraw", false);
- 
-
-        glUseProgram(0);*/
-        lightingShader.use();
         lightingShader.setBool("isWindowDraw", true);
 
         glBindVertexArray(cubeVao);
@@ -785,14 +658,11 @@ int main()
         lightingShader.setMat4("model", windowModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         lightingShader.setBool("isWindowDraw", false);
-
-
         glDisable(GL_BLEND);
         glEnable(GL_CULL_FACE);
         glUseProgram(0);
 
-        
-
+        // grass setup
         lightingShader.use();
         
         glActiveTexture(GL_TEXTURE0);
@@ -806,10 +676,10 @@ int main()
         glBindVertexArray(cubeVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
-
         glUseProgram(0);
 
-       
+#pragma region House
+        // house setup
         lightingShader.use();
         glBindVertexArray(cubeVao);
         glActiveTexture(GL_TEXTURE0);
@@ -853,22 +723,18 @@ int main()
         houseModel = glm::mat4(1.0f);
         houseModel = glm::translate(houseModel, glm::vec3(2.0f, 0.0f, -6.0f));
         houseModel = glm::scale(houseModel, glm::vec3(11.8f, 0.2f,5.0f));
-        //houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         houseModel = glm::mat4(1.0f);
         houseModel = glm::translate(houseModel, glm::vec3(2.0f, 4.3f, -6.0f));
         houseModel = glm::scale(houseModel, glm::vec3(11.8f, 0.2f, 5.1f));
-        //houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         houseModel = glm::mat4(1.0f);
         houseModel = glm::translate(houseModel, glm::vec3(2.0f, 8.3f, -6.0f));
         houseModel = glm::scale(houseModel, glm::vec3(11.8f, 0.2f, 5.1f));
-        //houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -881,7 +747,6 @@ int main()
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
        
-
 
         houseModel = glm::mat4(1.0f);
         houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -900,7 +765,11 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+#pragma endregion
 
+#pragma region Tapestry
+
+        // tapestry setup
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tapestry1Texture);
         houseModel = glm::mat4(1.0f);
@@ -975,7 +844,9 @@ int main()
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
+#pragma endregion
 
+        // reflector light source setup
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, reflectorTexture);
         glm::mat4 reflector = glm::mat4(1.0f);
@@ -995,8 +866,8 @@ int main()
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
+        // house door setup
         lightingShader.use();
-
         glm::vec3 houseDoorPosition = glm::vec3(2.0f, 3.0f, -3.43f);
         glm::mat4 houseDoorModelF = glm::mat4(1.0f);
         houseDoorModelF = glm::translate(houseDoorModelF, houseDoorPosition);
@@ -1025,7 +896,7 @@ int main()
         glBindVertexArray(0);
 
        
-
+        // smoke setup
         float smokeTime = glfwGetTime();
         float timeSinceLastMove = std::fmod(smokeTime, 1.0f);
 
@@ -1037,7 +908,7 @@ int main()
                 randomZ = (static_cast<float>(rand()) / RAND_MAX) * 0.2f - 0.1f;
             }
             if (smokeTranslates[0] > 3.0f) {
-                smokeTranslates = { 0.0f, 0.7f, 1.4f };
+                smokeTranslates = { -1.0f, 0.0f, 1.2f };
             }
         }
         glEnable(GL_BLEND);
@@ -1046,11 +917,7 @@ int main()
 
         for (int i = 0; i < smokeTranslates.size(); ++i) {
             smokeModel = glm::mat4(1.0f);
-            // Adjust translation on x and z axes for each plume
-           
-
-            // Adjust translation on x, y, and z axes for each plume
-            smokeModel = glm::translate(smokeModel, glm::vec3(2.0f + randomX, smokeTranslates[i], -5.0f + randomZ));
+            smokeModel = glm::translate(smokeModel, glm::vec3(1.95f + randomX, smokeTranslates[i], -5.0f + randomZ));
 
             lightingShader.use();
             lightingShader.setMat4("model", smokeModel);
@@ -1067,20 +934,45 @@ int main()
 
         glDisable(GL_BLEND);
 
-
-        
-
-        glm::mat4 chimneyModel = glm::mat4(1.0f);
-        chimneyModel = glm::translate(chimneyModel, glm::vec3(2.0f, 0.0f, -5.0f));
+        //chimney block setup
         lightingShader.use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, chimneyTexture);
 
-        lightingShader.setMat4("model", chimneyModel);
-        glBindVertexArray(chimneyVao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 16);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glm::mat4 chimneyModel = glm::mat4(1.0f);
+        chimneyModel = glm::translate(chimneyModel, glm::vec3(6.0f, 9.7f, -5.85f));
+        chimneyModel = glm::scale(chimneyModel, glm::vec3(1.0f, 2.5f, 0.1f));
 
+        lightingShader.setMat4("model", chimneyModel);
+        glBindVertexArray(cubeVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
+
+        chimneyModel = glm::mat4(1.0f);
+        chimneyModel = glm::translate(chimneyModel, glm::vec3(6.0f, 9.7f, -6.95f));
+        chimneyModel = glm::scale(chimneyModel, glm::vec3(1.0f, 2.5f, 0.1f));
+
+        lightingShader.setMat4("model", chimneyModel);
+        glBindVertexArray(cubeVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
+
+        chimneyModel = glm::mat4(1.0f);
+        chimneyModel = glm::translate(chimneyModel, glm::vec3(5.5f, 9.7f, -6.4f));
+        chimneyModel = glm::rotate(chimneyModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        chimneyModel = glm::scale(chimneyModel, glm::vec3(1.0f, 2.5f, 0.1f));
+
+        lightingShader.setMat4("model", chimneyModel);
+        glBindVertexArray(cubeVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
+        chimneyModel = glm::mat4(1.0f);
+        chimneyModel = glm::translate(chimneyModel, glm::vec3(6.5f, 9.7f, -6.4f));
+        chimneyModel = glm::rotate(chimneyModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        chimneyModel = glm::scale(chimneyModel, glm::vec3(1.0f, 2.5f, 0.1f));
+
+        lightingShader.setMat4("model", chimneyModel);
+        glBindVertexArray(cubeVao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
         glEnable(GL_CULL_FACE);
 
@@ -1105,6 +997,8 @@ int main()
         lightingShader.setMat4("model", sunModel);
         sun.Draw(lightingShader);
         lightingShader.setBool("displayWhite", false);
+        //lightingShader.setVec3("dirLight.color", glm::vec4(1.0f, sunColor, 0.0f, 1.0f));
+
         glUseProgram(0);
 
 
