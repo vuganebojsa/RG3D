@@ -644,17 +644,6 @@ int main()
         glUseProgram(0);
 
         lightingShader.use();
-        glm::mat4 catModel = glm::mat4(1.0f);
-        catModel = glm::translate(catModel, catPos);
-
-        catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        catModel = glm::scale(catModel, glm::vec3(0.015f));
-        lightingShader.setMat4("model", catModel);
-        cat.Draw(lightingShader);
-        glUseProgram(0);
-
-        lightingShader.use();
         glm::vec3 carPos = glm::vec3(19.0f, 0.1f, -5.5f);
         glm::mat4 carModel = glm::mat4(1.0f);
         carModel = glm::translate(carModel, carPos);
@@ -665,6 +654,16 @@ int main()
         car.Draw(lightingShader);
         glUseProgram(0);
 
+        lightingShader.use();
+        glm::mat4 catModel = glm::mat4(1.0f);
+        catModel = glm::translate(catModel, catPos);
+
+        catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        catModel = glm::scale(catModel, glm::vec3(0.015f));
+        lightingShader.setMat4("model", catModel);
+        cat.Draw(lightingShader);
+        glUseProgram(0);
 
         lightingShader.use();
 
