@@ -35,7 +35,7 @@ float lastX = wWidth / 2.0f;
 float lastY = wHeight / 2.0f;
 
 bool firstMouse = true;
-Camera camera(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+Camera camera(glm::vec3(2.0f, 3.0f, 13.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -126,6 +126,7 @@ int main()
 
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
+    Model cat("models/Cat/12221_Cat_v1_l3.obj");
     Model woman("models/Female/11554_pilgrim_female_V2_L2.obj");
     Model male("models/Male/ManCasual3.obj");
     Model sun("models/Sun/sun.obj");
@@ -510,6 +511,10 @@ int main()
     double lastPressTime1 = 0.0;
     double lastPressTime2 = 0.0;
     double debounceDelay = 0.5;
+    float catBoost = 0.0f;
+    glm::vec3 catPos = glm::vec3(12.0f, 0.05f, 1.4f);
+    float facingLeft = false;
+    float facingForward = false;
     while (!glfwWindowShouldClose(window))
     {
 #pragma region Keys
@@ -530,12 +535,15 @@ int main()
                 lastPressTime2 = glfwGetTime(); 
             }
         }
+        catBoost = 0.0f;
         camera.MovementSpeed = 8.0f;
 
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             camera.MovementSpeed = 15.0f;
+            catBoost = 0.05f;
+        }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             camera.ProcessKeyboard(FORWARD, 0.02f);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -553,17 +561,39 @@ int main()
         }
         if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
         {
-            
             doorRotationAngle += 20.0f * 0.03;
            
-
         }
         if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
         {
                doorRotationAngle -= 20.0f * 0.03;
              
         }
-       
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        {
+            catPos[2] += 0.04f + catBoost;
+            facingForward = false;
+
+        }
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        {
+            catPos[2] -= 0.04f + catBoost;
+            facingForward = true;
+
+
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        {
+            catPos[0] -= 0.04f + catBoost;
+            facingLeft = true;
+
+        }
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        {
+            catPos[0] += 0.04f + catBoost;
+            facingLeft = false;
+
+        }
         lightingShader.use();
         lightingShader.setBool("light1Status", light1Status);
         lightingShader.setBool("light2Status", light2Status);
@@ -611,6 +641,17 @@ int main()
         femaleModel = glm::scale(femaleModel, femaleScale);
         lightingShader.setMat4("model", femaleModel);
         woman.Draw(lightingShader);
+        glUseProgram(0);
+
+        lightingShader.use();
+        glm::mat4 catModel = glm::mat4(1.0f);
+        catModel = glm::translate(catModel, catPos);
+
+        catModel = glm::rotate(catModel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        catModel = glm::scale(catModel, glm::vec3(0.015f));
+        lightingShader.setMat4("model", catModel);
+        cat.Draw(lightingShader);
         glUseProgram(0);
 
         lightingShader.use();
@@ -1133,6 +1174,79 @@ int main()
 
         lightingShader.setMat4("model", model);
 
+        tree.Draw(lightingShader);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(4.0f, 0.0f, 0.0f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-15.0f, 0.0f, -5.0f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-11.0f, 0.0f, -8.0f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-13.0f, 0.0f, 2.0f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-6.0f, 0.0f, 5.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-11.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-15.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(8.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(13.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(18.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(23.0f, 0.0f, 11.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(24.0f, 0.0f, 4.5f));
+        lightingShader.setMat4("model", model);
+        tree.Draw(lightingShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(11.0f, 0.0f, 4.5f));
+        lightingShader.setMat4("model", model);
         tree.Draw(lightingShader);
         glUseProgram(0);
         lightingShader.use();
