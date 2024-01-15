@@ -220,6 +220,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
     unsigned grassTexture = loadImageToTexture("res/trava.jpg");
+    unsigned dirtTexture = loadImageToTexture("res/dirt.jpg");
     unsigned tileTexture = loadImageToTexture("res/tile.jpg");
     unsigned metalTexture = loadImageToTexture("res/metal.jpg");
     unsigned concreteTexture = loadImageToTexture("res/concrete.jpg");
@@ -242,8 +243,8 @@ int main()
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, metalTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -342,6 +343,13 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, dirtTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, chimneyTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -692,6 +700,15 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
 
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, dirtTexture);
+        garageModel = glm::mat4(1.0f);
+        garageModel = glm::translate(garageModel, glm::vec3(3.2f, -0.1f, 13.0f));
+        garageModel = glm::scale(garageModel, glm::vec3(1.2f, 0.05f, 9.0f));
+        lightingShader.setMat4("model", garageModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
 
        
@@ -761,7 +778,7 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, grassSpecularTexture);
         glm::mat4 groundModel = glm::mat4(1.0f);
-        groundModel = glm::translate(groundModel, glm::vec3(2.0f, -0.6f, 0.0f));
+        groundModel = glm::translate(groundModel, glm::vec3(1.5f, -0.6f, 0.0f));
         groundModel = glm::scale(groundModel, glm::vec3(49.0, 1.0, 35.0));
         lightingShader.setMat4("model", groundModel);
         glBindVertexArray(cubeVao);
@@ -1254,6 +1271,7 @@ int main()
     glDeleteProgram(lightCubeShader.ID);
    
     glDeleteTextures(1, &grassTexture);
+    glDeleteTextures(1, &dirtTexture);
     glDeleteTextures(1, &tileTexture);
     glDeleteTextures(1, &metalTexture);
     glDeleteTextures(1, &wall);
