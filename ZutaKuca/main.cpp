@@ -126,7 +126,7 @@ int main()
 
     Model tree("models/Tree/Tree.obj");
     Model dog("models/Dog/13466_Canaan_Dog_v1_L3.obj");
-    Model man("models/Man/man.obj");
+    Model woman("models/Female/11554_pilgrim_female_V2_L2.obj");
     Model male("models/Male/ManCasual3.obj");
     Model sun("models/Sun/sun.obj");
     Model fence("models/Ograda/fence.obj");
@@ -569,6 +569,16 @@ int main()
         male.Draw(lightingShader);
         glUseProgram(0);
 
+        lightingShader.use();
+        glm::vec3 femalePos = glm::vec3(0.0f, 4.5f, -5.4f);
+        glm::mat4 femaleModel = glm::mat4(1.0f);
+        femaleModel = glm::translate(femaleModel, femalePos);
+        femaleModel = glm::rotate(femaleModel,glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+        glm::vec3 femaleScale = glm::vec3(0.01f);
+        femaleModel = glm::scale(femaleModel, femaleScale);
+        lightingShader.setMat4("model", femaleModel);
+        woman.Draw(lightingShader);
+        glUseProgram(0);
     
         // window setup
         lightingShader.use();
