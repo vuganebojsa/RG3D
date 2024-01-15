@@ -170,7 +170,7 @@ int main()
     lightingShader.setVec3("pointLights[0].intensity", glm::vec3(1.0, 1.0, 1.0));
 
     lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-    lightingShader.setVec3("pointLights[1].ambient", 0.35f, 0.35f, 0.35f);
+    lightingShader.setVec3("pointLights[1].ambient", 0.15f, 0.15f, 0.15f);
     lightingShader.setVec3("pointLights[1].diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setVec3("pointLights[1].specular", 0.2f, 0.2f,  0.2f);
     lightingShader.setFloat("pointLights[1].constant", 1.0f);
@@ -219,6 +219,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
     unsigned grassTexture = loadImageToTexture("res/trava.jpg");
+    unsigned roofTexture = loadImageToTexture("res/roof.jpg");
     unsigned floorTexture = loadImageToTexture("res/floor.jpg");
     unsigned neonTexture = loadImageToTexture("res/neon.jpg");
     unsigned reflectorTexture = loadImageToTexture("res/chimney.jpg");
@@ -233,6 +234,13 @@ int main()
     unsigned tapestry2Texture = loadImageToTexture("res/tapestry2.jpg");
     unsigned tapestry7Texture = loadImageToTexture("res/tapestry7.jpg");
     unsigned windowTexture = loadImageToTexture("res/window.jpg");
+    glBindTexture(GL_TEXTURE_2D, roofTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, floorTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -657,15 +665,15 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         houseModel = glm::mat4(1.0f);
-        houseModel = glm::translate(houseModel, glm::vec3(7.0f, 6.4f, -6.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 4.1f, 5.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(7.0f, 6.3f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 3.9f, 5.0f));
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         houseModel = glm::mat4(1.0f);
-        houseModel = glm::translate(houseModel, glm::vec3(-3.0f, 6.4f, -6.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 4.1f, 5.0f));
+        houseModel = glm::translate(houseModel, glm::vec3(-3.0f, 6.3f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 3.9f, 5.0f));
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -691,16 +699,9 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         houseModel = glm::mat4(1.0f);
-        houseModel = glm::translate(houseModel, glm::vec3(2.0f, 8.3f, -6.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(11.8f, 0.2f, 5.1f));
-        lightingShader.setMat4("model", houseModel);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-        houseModel = glm::mat4(1.0f);
         houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        houseModel = glm::translate(houseModel, glm::vec3(8.4f, 6.5f, 2.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 4.2f, 10.2f));
+        houseModel = glm::translate(houseModel, glm::vec3(8.4f, 6.3f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.2f, 3.9f, 10.2f));
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -716,8 +717,8 @@ int main()
 
         houseModel = glm::mat4(1.0f);
         houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        houseModel = glm::translate(houseModel, glm::vec3(3.5f, 6.5f, 2.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 4.2f, 10.2f));
+        houseModel = glm::translate(houseModel, glm::vec3(3.5f, 6.3f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.1f, 3.9f, 10.2f));
 
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -735,6 +736,15 @@ int main()
         houseModel = glm::mat4(1.0f);
         houseModel = glm::translate(houseModel, glm::vec3(2.0f, 4.5f, -6.0f));
         houseModel = glm::scale(houseModel, glm::vec3(9.8f, 0.1f, 4.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, roofTexture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(2.0f, 8.35f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(11.8f, 0.2f, 5.1f));
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -786,8 +796,8 @@ int main()
         glBindTexture(GL_TEXTURE_2D, tapestry7Texture);
         houseModel = glm::mat4(1.0f);
         houseModel = glm::rotate(houseModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        houseModel = glm::translate(houseModel, glm::vec3(3.56f, 6.15f, 2.0f));
-        houseModel = glm::scale(houseModel, glm::vec3(0.01f, 4.1f, 9.9f));
+        houseModel = glm::translate(houseModel, glm::vec3(3.56f, 6.2f, 2.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(0.01f, 4.2f, 9.9f));
         lightingShader.setMat4("model", houseModel);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -1135,6 +1145,7 @@ int main()
     glDeleteTextures(1, &tapestry6Texture);
     glDeleteTextures(1, &tapestry7Texture);
     glDeleteTextures(1, &floorTexture);
+    glDeleteTextures(1, &roofTexture);
 #pragma endregion
 
     glfwTerminate();
