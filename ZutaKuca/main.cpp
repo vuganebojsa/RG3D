@@ -160,7 +160,7 @@ int main()
     lightingShader.setVec3("dirLight.color", 1.0f, 1.0f, 1.0f);
 
     lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-    lightingShader.setVec3("pointLights[0].ambient", 0.15f, 0.15f, 0.15f);
+    lightingShader.setVec3("pointLights[0].ambient", 0.35f, 0.35f, 0.35f);
     lightingShader.setVec3("pointLights[0].diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setVec3("pointLights[0].specular", 0.2f, 0.2f, 0.2f);
     lightingShader.setFloat("pointLights[0].constant", 1.0f);
@@ -170,7 +170,7 @@ int main()
     lightingShader.setVec3("pointLights[0].intensity", glm::vec3(1.0, 1.0, 1.0));
 
     lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-    lightingShader.setVec3("pointLights[1].ambient", 0.15f, 0.15f, 0.15f);
+    lightingShader.setVec3("pointLights[1].ambient", 0.35f, 0.35f, 0.35f);
     lightingShader.setVec3("pointLights[1].diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setVec3("pointLights[1].specular", 0.2f, 0.2f,  0.2f);
     lightingShader.setFloat("pointLights[1].constant", 1.0f);
@@ -211,12 +211,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
-    unsigned wallWindow = loadImageToTexture("res/wallwindow.png");
-    glBindTexture(GL_TEXTURE_2D, wallWindow);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glBindTexture(GL_TEXTURE_2D, 0);
+ 
     unsigned name = loadImageToTexture("res/name.png");
     glBindTexture(GL_TEXTURE_2D, name);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -224,6 +219,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
     unsigned grassTexture = loadImageToTexture("res/trava.jpg");
+    unsigned floorTexture = loadImageToTexture("res/floor.jpg");
     unsigned neonTexture = loadImageToTexture("res/neon.jpg");
     unsigned reflectorTexture = loadImageToTexture("res/chimney.jpg");
     unsigned smokeTexture = loadImageToTexture("res/smoke.png");
@@ -237,6 +233,11 @@ int main()
     unsigned tapestry2Texture = loadImageToTexture("res/tapestry2.jpg");
     unsigned tapestry7Texture = loadImageToTexture("res/tapestry7.jpg");
     unsigned windowTexture = loadImageToTexture("res/window.jpg");
+    glBindTexture(GL_TEXTURE_2D, floorTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindTexture(GL_TEXTURE_2D, windowTexture);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -372,31 +373,7 @@ int main()
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f,  -1.0f,  0.0f,  0.0f
     };
 
-    float chimneyVertices[] =
-    {
-         // Second Floor (Yellow)
-         3.7,  8.2,  -1.0, 1.0, 1.0,  0.0,
-          4.2,  8.2,  -1.0, 1.0, 1.0,  0.0,
-         3.7,  12.4,  -1.0, 1.0, 1.0,  0.0,
-          4.2,  12.4,  -1.0, 1.0, 1.0,  0.0,
 
-          3.7,  8.2,  -2.0, 1.0, 1.0,  0.0,
-           4.2,  8.2,  -2.0, 1.0, 1.0,  0.0,
-          3.7,  12.4,  -2.0, 1.0, 1.0,  0.0,
-           4.2,  12.4,  -2.0, 1.0, 1.0,  0.0,
-
-           // left side of house top
-          3.7,  8.2,  -2.0, 1.0, 1.0,  0.0,
-          3.71,  12.4,  -2.0, 1.0, 1.0,  0.0,
-          3.7,  8.2,  -1.0, 1.0, 1.0,  0.0,
-          3.71,  12.4,  -1.0, 1.0, 1.0,  0.0,
-          // right side
-          4.2,  8.2,  -2.0, 1.0, 1.0,  0.0,
-          4.21,  12.4,  -2.0, 1.0, 1.0,  0.0,
-         4.2,  8.2,  -1.0, 1.0, 1.0,  0.0,
-          4.21,  12.4,  -1.0, 1.0, 1.0,  0.0,
-
-    };
     float smokeVertices[] =
     {
         3.85,  12.27,  -1.2, 1.0, 1.0,  0.0,
@@ -466,25 +443,6 @@ int main()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    
-
-    unsigned int chimneyVao, chimneyVbo;
-    glGenVertexArrays(1, &chimneyVao);
-    glBindVertexArray(chimneyVao);
-
-    glGenBuffers(1, &chimneyVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, chimneyVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(chimneyVertices), chimneyVertices, GL_STATIC_DRAW);
-
-    // Set up attribute pointers for the house
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Unbind buffers for the house
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -765,6 +723,22 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, floorTexture);
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(2.0f, 0.07f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(11.7f, 0.1f, 4.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        houseModel = glm::mat4(1.0f);
+        houseModel = glm::translate(houseModel, glm::vec3(2.0f, 4.5f, -6.0f));
+        houseModel = glm::scale(houseModel, glm::vec3(9.8f, 0.1f, 4.9f));
+        lightingShader.setMat4("model", houseModel);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
 #pragma endregion
 
 #pragma region Tapestry
@@ -1028,40 +1002,25 @@ int main()
         glUseProgram(0);
 
         lightingShader.use();
-
         glm::vec3 fencePosition = glm::vec3(-23.0f, 0.0f, 8.0f);
         glm::mat4 fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
-
-        // Rotate the fence by 40 degrees around the x-axis
         float fenceRotationAngle = glm::radians(10.0f);
         fenceModel = glm::rotate(fenceModel, fenceRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // Adjust the scale as needed
         glm::vec3 fenceScale = glm::vec3(15.0f, 1.0f, 1.0f);
         fenceModel = glm::scale(fenceModel, fenceScale);
-
         lightingShader.setMat4("model", fenceModel);
-
         fence.Draw(lightingShader);
         glUseProgram(0);
-
         lightingShader.use();
-
-         fencePosition = glm::vec3(4.0f, 0.0f, 8.0f);
+        fencePosition = glm::vec3(4.0f, 0.0f, 8.0f);
         fenceModel = glm::mat4(1.0f);
         fenceModel = glm::translate(fenceModel, fencePosition);
-
-        // Rotate the fence by 40 degrees around the x-axis
         fenceRotationAngle = glm::radians(10.0f);
         fenceModel = glm::rotate(fenceModel, fenceRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // Adjust the scale as needed
         fenceScale = glm::vec3(12.8f, 1.0f, 1.0f);
         fenceModel = glm::scale(fenceModel, fenceScale);
-
         lightingShader.setMat4("model", fenceModel);
-
         fence.Draw(lightingShader);
         glUseProgram(0);
 
@@ -1072,12 +1031,12 @@ int main()
         float dogX = 1.0f +  glm::cos(orbitAngle) * orbitRadius;
         float dogZ = -4.0f + glm::sin(orbitAngle) * orbitRadius;
 
+        // Update the model matrix for the dog's position, scale, and rotation
+
         glm::vec3 dogScale = glm::vec3(0.03f);
 
-        // Update the model matrix for the dog's position and scale
         float orientationAngle = -glm::atan(dogZ, dogX) + 0.5;  
 
-        // Update the model matrix for the dog's position, scale, and rotation
         glm::mat4 dogModel = glm::mat4(1.0f);
         dogModel = glm::translate(dogModel, glm::vec3(dogX, 0.0f, dogZ));
         dogModel = glm::rotate(dogModel, orientationAngle, glm::vec3(0.0f, 1.0f, 0.0f));  
@@ -1149,6 +1108,34 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+#pragma region Cleanup
+    glDeleteBuffers(1, &cubeVao);
+    glDeleteBuffers(1, &lightCubeVAO);
+    glDeleteVertexArrays(1, &VBO);
+    glDeleteBuffers(1, &smokeVao);
+    glDeleteVertexArrays(1, &smokeVbo);
+    glDeleteProgram(nameShader.ID);
+    glDeleteProgram(lightingShader.ID);
+    glDeleteProgram(lightCubeShader.ID);
+   
+    glDeleteTextures(1, &grassTexture);
+    glDeleteTextures(1, &wall);
+    glDeleteTextures(1, &name);
+    glDeleteTextures(1, &neonTexture);
+    glDeleteTextures(1, &reflectorTexture);
+    glDeleteTextures(1, &smokeTexture);
+    glDeleteTextures(1, &chimneyTexture);
+    glDeleteTextures(1, &grassSpecularTexture);
+    glDeleteTextures(1, &windowTexture);
+    glDeleteTextures(1, &tapestry1Texture);
+    glDeleteTextures(1, &tapestry2Texture);
+    glDeleteTextures(1, &tapestry3Texture);
+    glDeleteTextures(1, &tapestry4Texture);
+    glDeleteTextures(1, &tapestry5Texture);
+    glDeleteTextures(1, &tapestry6Texture);
+    glDeleteTextures(1, &tapestry7Texture);
+    glDeleteTextures(1, &floorTexture);
+#pragma endregion
 
     glfwTerminate();
     return 0;
