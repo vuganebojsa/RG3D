@@ -155,7 +155,7 @@ int main()
     lightingShader.setInt("material.specular", 1);
     lightingShader.setFloat("material.shininess", 32.0f);
 
-    lightingShader.setVec3("dirLight.direction", 0.0f, -1.0f, 0.0f);
+    lightingShader.setVec3("dirLight.direction", 0.0f, -1.0f, -0.5f);
     lightingShader.setVec3("dirLight.ambient", 0.6f, 0.6f, 0.6f);
     lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.setVec3("dirLight.specular", 0.8f, 0.8f, 0.8f);
