@@ -65,7 +65,7 @@ uniform bool isWindowDraw=false;
 uniform bool isWindowTransparent=false;
 uniform vec4 uSunColor;
 uniform bool isDoorDraw = false;
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, bool isInsideHouse);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 bool isPointInsideBox(vec3 point, vec3 minBounds, vec3 maxBounds);
@@ -89,10 +89,11 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
     
-    vec3 result = CalcDirLight(dirLight, norm, viewDir);
      vec3 houseMinBounds = vec3(-3.9f, 0.0f, -8.4f);
     vec3 houseMaxBounds = vec3(8.0f, 15.0f, -3.52f); 
     bool isInsideHouse = isPointInsideBox(FragPos, houseMinBounds, houseMaxBounds);
+    vec3 result = CalcDirLight(dirLight, norm, viewDir, isInsideHouse);
+
     // point lights
     for(int i = 0; i < 3; i++){
         if(i==0 && light1Status == false){
@@ -134,7 +135,7 @@ void main()
 bool isPointInsideBox(vec3 point, vec3 minBounds, vec3 maxBounds) {
     return all(greaterThanEqual(point, minBounds)) && all(lessThanEqual(point, maxBounds));
 }
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, bool isInsideHouse)
 {
     vec3 lightDir = normalize(-light.direction);
     // diffuse shading
@@ -144,6 +145,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // combine results
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords)) * light.color;
+    if(isInsideHouse){
+        return ambient;
+    }
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords)) * light.color;
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)) * light.color;
     return (ambient + diffuse + specular);
