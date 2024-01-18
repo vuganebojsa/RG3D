@@ -36,23 +36,10 @@
     <None Include="basic.vert">
       <Filter>Source Files\Shader Files</Filter>
     </None>
-    <None Include="phong.frag" />
-    <None Include="phong.vert" />
     <None Include="name.vert" />
     <None Include="name.frag" />
     <None Include="simple.vert" />
     <None Include="simple.frag" />
-    <None Include="cube.frag" />
-    <None Include="cube.vert" />
-    <None Include="house.frag" />
-    <None Include="ground.frag" />
-    <None Include="chimney.frag" />
-    <None Include="door.frag" />
-    <None Include="smoke.frag" />
-    <None Include="window.frag" />
-    <None Include="model.vert" />
-    <None Include="model.frag" />
-    <None Include="light..frag" />
     <None Include="light.vert" />
   </ItemGroup>
   <ItemGroup>

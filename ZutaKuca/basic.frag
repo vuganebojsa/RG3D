@@ -80,10 +80,7 @@ void main()
         FragColor = uSunColor;
     }else if(displaySmoke){
         FragColor = vec4(0.8, 0.8, 0.8, 0.4);
-    }else if(isWindowDraw && isWindowTransparent){
-        FragColor = vec4(0.8, 0.8, 0.8, 0.4);
-            
-    }
+    } 
     else{
      // properties
     vec3 norm = normalize(Normal);
@@ -127,8 +124,12 @@ void main()
 
         }
 
-        
-        FragColor = vec4(result, 1.0);
+        if(isWindowTransparent){
+            FragColor = vec4(result, 0.4);
+            
+        }
+        else 
+            FragColor = vec4(result, 1.0);
     }
    
 }
